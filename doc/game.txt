@@ -1,0 +1,18 @@
+Land of Promise:
+
+Build, mine, and explore a randomly generated world
+
+Features:
+    Mine for precious resources
+    Upgrade and build new gear
+    Go on quests given by npcs
+    Build factories to create more complex recipes
+
+TODO:
+    - Basic Player movement
+        - Camera look
+        - Movement
+        - Jumping
+    - Randomly generated world
+    - Inventory and items
+    - Mining
