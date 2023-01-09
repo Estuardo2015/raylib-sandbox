@@ -30,10 +30,10 @@ void Game::Draw() {
     DrawFPS(10, 10);
 
     std::string cameraAngle = "CameraX: " + std::to_string(player.camera.target.x) + " - CameraY: " + std::to_string(player.camera.target.y) + " - Camera Z: " + std::to_string(player.camera.target.z);
-    DrawText(StrToCharArr(cameraAngle), 10, 25, 20, LIGHTGRAY);
+    DrawText(StrToCharArr(cameraAngle), 10, 30, 20, BLACK);
 
-    std::string cameraPosition = "CameraX: " + std::to_string(player.camera.position.x) + " - CameraY: " + std::to_string(player.camera.position.z);
-    DrawText(StrToCharArr(cameraPosition), 10, 50, 20, BLUE);
+    std::string cameraPosition = "CameraPosX: " + std::to_string(player.camera.position.x) + " - CameraPosY: " + std::to_string(player.camera.position.z);
+    DrawText(StrToCharArr(cameraPosition), 10, 60, 20, BLUE);
 
     EndDrawing();
 }
