@@ -8,18 +8,16 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-//    const int screenWidth = 1200;
-//    const int screenHeight = 850;
     InitWindow(0, 0, "Land of Promise");
     ToggleFullscreen();
 
     Game g = Game();
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
 
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         g.Update();
 
@@ -27,7 +25,7 @@ int main()
     }
 
     // De-Initialization
-    CloseWindow();        // Close window and OpenGL context
+    CloseWindow(); // Close window and OpenGL context
 
     return 0;
 }

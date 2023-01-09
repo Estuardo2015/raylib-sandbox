@@ -38,7 +38,6 @@ void Player::Update() {
     direction.x -= (mousePositionDelta.x * -MOUSE_SENSITIVITY);
     direction.y -= (mousePositionDelta.y * -MOUSE_SENSITIVITY);
 
-    // Handle keys & mouse
     // Calculate direction vectors of the camera angle
     float cx = cosf(direction.x);
     float sx = sinf(direction.x);
@@ -53,8 +52,8 @@ void Player::Update() {
     float forwardY = cy;
     float forwardZ = sx * sy;
 
+    // Handle keys & mouse
     Vector3 moveDir = { 0 };
-
     if (IsKeyDown(KEY_W)) {
         moveDir.z += sx;
         moveDir.x += cx;
