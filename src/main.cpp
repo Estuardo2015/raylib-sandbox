@@ -1,5 +1,5 @@
 #include "../include/raylib.h"
-#include "game.hpp"
+#include "game.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point

@@ -55,18 +55,6 @@ build CMakeFiles/simple_example.dir/src/main.cpp.obj: CXX_COMPILER__simple_examp
   OBJECT_DIR = CMakeFiles\simple_example.dir
   OBJECT_FILE_DIR = CMakeFiles\simple_example.dir\src
 
-build CMakeFiles/simple_example.dir/src/player.cpp.obj: CXX_COMPILER__simple_example_Debug C$:/Users/Pythagoras/CLionProjects/raylib-sandbox/src/player.cpp || cmake_object_order_depends_target_simple_example
-  DEP_FILE = CMakeFiles\simple_example.dir\src\player.cpp.obj.d
-  FLAGS = -g -fdiagnostics-color=always -std=gnu++14
-  OBJECT_DIR = CMakeFiles\simple_example.dir
-  OBJECT_FILE_DIR = CMakeFiles\simple_example.dir\src
-
-build CMakeFiles/simple_example.dir/src/game.cpp.obj: CXX_COMPILER__simple_example_Debug C$:/Users/Pythagoras/CLionProjects/raylib-sandbox/src/game.cpp || cmake_object_order_depends_target_simple_example
-  DEP_FILE = CMakeFiles\simple_example.dir\src\game.cpp.obj.d
-  FLAGS = -g -fdiagnostics-color=always -std=gnu++14
-  OBJECT_DIR = CMakeFiles\simple_example.dir
-  OBJECT_FILE_DIR = CMakeFiles\simple_example.dir\src
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target simple_example
@@ -75,7 +63,7 @@ build CMakeFiles/simple_example.dir/src/game.cpp.obj: CXX_COMPILER__simple_examp
 #############################################
 # Link the executable simple_example.exe
 
-build simple_example.exe: CXX_EXECUTABLE_LINKER__simple_example_Debug CMakeFiles/simple_example.dir/src/main.cpp.obj CMakeFiles/simple_example.dir/src/player.cpp.obj CMakeFiles/simple_example.dir/src/game.cpp.obj
+build simple_example.exe: CXX_EXECUTABLE_LINKER__simple_example_Debug CMakeFiles/simple_example.dir/src/main.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\simple_example.dir

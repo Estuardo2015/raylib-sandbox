@@ -1,10 +1,26 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #include "../include/raylib.h"
 #include "../include/raymath.h"
-#include "player.hpp"
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 const float MOUSE_SENSITIVITY = 0.003f;
+
+class Player {
+    Vector3 position;
+    Vector3 direction;
+    Vector3 velocity;
+    float speed;
+
+public:
+    Vector2 oldMousePosition;
+    Camera3D camera{};
+
+    Player();
+    void Update();
+};
 
 Player::Player() {
     // Initialize player state
@@ -106,3 +122,5 @@ void Player::Update() {
     camera.position = position;
     UpdateCamera(&camera);
 }
+
+#endif

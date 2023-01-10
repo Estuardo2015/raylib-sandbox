@@ -1,7 +1,18 @@
-#include "game.hpp"
+#ifndef GAME_H
+#define GAME_H
+
+#include "player.h"
 #include "string"
-#include "cstring"
 #include "utils.h"
+
+class Game {
+    Player player;
+
+public:
+    Game();
+    void Update();
+    void Draw();
+};
 
 Game::Game() {
     player = Player();
@@ -37,3 +48,5 @@ void Game::Draw() {
 
     EndDrawing();
 }
+
+#endif
