@@ -4,18 +4,23 @@
 #include "player.h"
 #include "string"
 #include "utils.h"
+#include "world.h"
+#include "block.h"
 
 class Game {
     Player player;
+    World world;
 
 public:
     Game();
     void Update();
     void Draw();
+    void DrawWorld();
 };
 
 Game::Game() {
     player = Player();
+    world = NewTestWorld();
 }
 
 void Game::Update() {
@@ -36,6 +41,8 @@ void Game::Draw() {
 
     DrawGrid(10, 1.0f);
 
+    DrawWorld();
+
     EndMode3D();
 
     DrawFPS(10, 10);
@@ -47,6 +54,20 @@ void Game::Draw() {
     DrawText(StrToCharArr(cameraPosition), 10, 60, 20, BLUE);
 
     EndDrawing();
+}
+
+void Game::DrawWorld() {
+    for (auto c : world.chunks) {
+        for (float x = 0; x < 16; ++x) {
+            for (float y = 0; y < 16; ++y) {
+                for (float z = 0; z < 16; ++z) {
+                    int idx = GetIndex({x, y, z}, 16, 16);
+                    Block block = c.blocks[idx];
+                    DrawCube({ x*1, y*1, z*1 }, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, BLOCK_DICT[block.Material]);
+                }
+            }
+        }
+    }
 }
 
 #endif
