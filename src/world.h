@@ -4,7 +4,7 @@
 #include "block.h"
 
 const int WORLD_SIZE = 1; // In chunks
-const int CHUNK_SIZE = 256; // 256 blocks
+const int CHUNK_SIZE = 16; // 256 blocks
 
 class Chunk {
     public:

@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.13)  # CMake version check
-project(simple_example)               # Create project "simple_example"
-set(CMAKE_CXX_STANDARD 14)            # Enable c++14 standard
+cmake_minimum_required(VERSION 3.24)
 
-# Add main.cpp file of project root directory as source file
-set(SOURCE_FILES ./src/main.cpp)
+project(raylib-sandbox)
 
-# Add executable target with source files listed in SOURCE_FILES variable
-add_executable(simple_example ${SOURCE_FILES})
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(raylib-sandbox ./include ./src/)
+add_executable(raylib-sandbox ./src/main.cpp)
+target_link_libraries(raylib-sandbox $ENV{RAYLIB_PATH} opengl32 gdi32 winmm)
