@@ -4,7 +4,7 @@
 #include "block.h"
 
 const int WORLD_SIZE = 1; // In chunks
-const int CHUNK_SIZE = 16; // 256 blocks
+const int CHUNK_SIZE = 4096; // 256 blocks
 
 class Chunk {
     public:
@@ -24,6 +24,8 @@ World NewTestWorld() {
             unsigned short int mat = 1;
             if (j % 2 == 0) {
                 mat = 2;
+            } else if (j % 3 == 0) {
+                mat = 3;
             }
 
             w.chunks[i].blocks[j] = Block{mat};
