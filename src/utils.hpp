@@ -1,5 +1,9 @@
+#ifndef UTILS_HPP
+#define UTILS_HPP
+
 #include <cstring>
 #include "string"
+#include "chunk.hpp"
 
 char* StrToCharArr(std::string s) {
     const int length = s.length();
@@ -8,3 +12,5 @@ char* StrToCharArr(std::string s) {
 
     return char_array;
 }
+
+#endif
