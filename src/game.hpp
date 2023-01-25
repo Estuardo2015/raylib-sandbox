@@ -42,12 +42,6 @@ void Game::Draw() {
 
     world.Render();
 
-    Mesh mesh = GenMeshCube(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-    Model model = LoadModelFromMesh(mesh);
-    model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = blockDataManager->BlockTextureDictionary[Dirt];             // Set map diffuse texture
-    Vector3 mapPosition = {0.0f, 0.5f, 0.0f};          // Set model position
-    DrawModel(model, mapPosition, 1.0f, WHITE);
-
     EndMode3D();
 
     DrawFPS(10, 10);
