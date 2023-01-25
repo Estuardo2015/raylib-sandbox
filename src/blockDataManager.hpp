@@ -1,6 +1,7 @@
 #ifndef BLOCKDATAMANAGER_HPP
 #define BLOCKDATAMANAGER_HPP
 
+#include "../include/raylib.h"
 #include "unordered_map"
 #include "block.hpp"
 
@@ -19,6 +20,6 @@ BlockDataManager::BlockDataManager() {
     BlockTextureDictionary[Dirt] = texture;
 }
 
-BlockDataManager blockDataManager;
+BlockDataManager *blockDataManager;
 
 #endif
