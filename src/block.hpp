@@ -14,13 +14,18 @@ enum BlockType {
     Stone
 };
 
-std::unordered_map<unsigned short int, Color> BLOCK_DICT {{Water,BLUE}, {Dirt,BROWN}, {Grass_Dirt,DARKGREEN}, {Stone,GRAY}};
+std::unordered_map<unsigned short int, Color> BLOCK_DICT{{Water,      BLUE},
+                                                         {Dirt,       BROWN},
+                                                         {Grass_Dirt, DARKGREEN},
+                                                         {Stone,      GRAY}};
 
 class Block {
-    public:
-        BlockType type;
-        Block();
-        Block(BlockType);
+public:
+    BlockType type;
+
+    Block();
+
+    Block(BlockType);
 };
 
 Block::Block() {

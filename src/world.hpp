@@ -3,6 +3,7 @@
 
 #include "block.hpp"
 #include "chunk.hpp"
+#include "blockDataManager.hpp"
 #include "../include/PerlinNoise.hpp"
 #include <unordered_map>
 #include <string>
@@ -10,14 +11,20 @@
 const int WORLD_SIZE = 1; // In chunks
 
 class World {
-    public:
-        float noiseScale = 0.03;
-        int waterThreshold = 50;
-        Chunk chunkMap[WORLD_SIZE][WORLD_SIZE];
-        World();
-        void GenerateWorld();
-        void GenerateBlocks(Chunk chunk);
-        void Render();
+public:
+    float noiseScale = 0.03;
+    int waterThreshold = 50;
+    Chunk chunkMap[WORLD_SIZE][WORLD_SIZE];
+
+    World();
+
+    void GenerateWorld();
+
+    void GenerateBlocks(Chunk chunk);
+
+    void Render();
+
+    void GenerateTestWorld(Chunk *chunk);
 };
 
 World::World() {
@@ -26,44 +33,42 @@ World::World() {
 
 void World::GenerateWorld() {
     for (int x = 0; x < WORLD_SIZE; x++) {
-        for (int y = 0; y < WORLD_SIZE; y++)
-        {
+        for (int y = 0; y < WORLD_SIZE; y++) {
             Chunk chunk = Chunk();
             chunk.worldPosition = {float(x), float(y)};
-            GenerateBlocks(chunk);
+            GenerateTestWorld(&chunk);
             chunkMap[x][y] = chunk;
         }
     }
 }
 
+void World::GenerateTestWorld(Chunk *chunk) {
+    for (float x = 0; x < CHUNK_WIDTH; x++) {
+        for (float z = 0; z < CHUNK_WIDTH; z++) {
+            chunk->SetBlock({x, 0, z}, Block(Dirt));
+        }
+    }
+}
+
 void World::GenerateBlocks(Chunk chunk) {
-    for (float x = 0; x < CHUNK_WIDTH; x++)
-    {
-        for (float z = 0; z < CHUNK_WIDTH; z++)
-        {
-            siv::PerlinNoise perlin{ };
+    for (float x = 0; x < CHUNK_WIDTH; x++) {
+        for (float z = 0; z < CHUNK_WIDTH; z++) {
+            siv::PerlinNoise perlin{};
 
             double noiseValue = perlin.noise2D((chunk.worldPosition.x + x) * noiseScale, (0 + z) * noiseScale);
             //float noiseValue = Mathf.PerlinNoise((chunk.worldPosition.x + x) * noiseScale, (chunk.worldPosition.z + z) * noiseScale);
             int groundPosition = std::round(noiseValue * CHUNK_HEIGHT);
 
-            for (float y = 0; y < CHUNK_HEIGHT; y++)
-            {
+            for (float y = 0; y < CHUNK_HEIGHT; y++) {
                 BlockType blockType = Dirt;
-                if (y > groundPosition)
-                {
-                    if (y < waterThreshold)
-                    {
+                if (y > groundPosition) {
+                    if (y < waterThreshold) {
                         blockType = Water;
-                    }
-                    else
-                    {
+                    } else {
                         blockType = Air;
                     }
 
-                }
-                else if (y == groundPosition)
-                {
+                } else if (y == groundPosition) {
                     blockType = Grass_Dirt;
                 }
 
@@ -74,10 +79,8 @@ void World::GenerateBlocks(Chunk chunk) {
 }
 
 void World::Render() {
-    for (int x = 0; x < WORLD_SIZE; x++)
-    {
-        for (int y = 0; y < WORLD_SIZE; y++)
-        {
+    for (int x = 0; x < WORLD_SIZE; x++) {
+        for (int y = 0; y < WORLD_SIZE; y++) {
             Chunk chunk = chunkMap[x][y];
 
             for (int chunkX = 0; chunkX < CHUNK_WIDTH; chunkX++) {
@@ -86,7 +89,14 @@ void World::Render() {
                         Vector3 blockPosition = {float(chunkX), float(chunkY), float(chunkZ)};
                         Block block = chunk.GetBlock(blockPosition);
                         if (block.type != Air) {
-                            DrawCube(blockPosition, BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, BLOCK_DICT[block.type]);
+                            Mesh mesh = GenMeshCube(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                            Model model = LoadModelFromMesh(mesh);
+
+                            model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = blockDataManager.BlockTextureDictionary[block.type];             // Set map diffuse texture
+
+                            Vector3 mapPosition = {0.0f, 0.0f, 0.0f};          // Set model position
+
+                            DrawModel(model, mapPosition, 1.0f, WHITE);
                         }
                     }
                 }

@@ -2,7 +2,6 @@
 #define CHUNK_HPP
 
 #include "block.hpp"
-#include "chunk.hpp"
 #include "utils.hpp"
 #include <functional>
 #include "raylib.h"
@@ -12,16 +11,21 @@ const int CHUNK_HEIGHT = 100;
 
 class Chunk {
 public:
-    Block blocks[CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_HEIGHT];
-    int blocksLength = CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_HEIGHT;
+    Block blocks[CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT];
+    int blocksLength = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
     Vector2 worldPosition;
     float noiseScale = 0.3;
 
     Chunk();
+
     void IterateThroughBlocks(std::function<void(Vector3)> func);
+
     void SetBlock(Vector3 localPosition, Block block);
+
     Block GetBlock(Vector3 localPosition);
+
     Vector3 IndexToVector3(unsigned int idx);
+
     int Vector3ToIndex(Vector3 p);
 };
 
@@ -30,7 +34,7 @@ Chunk::Chunk() {
 }
 
 void Chunk::IterateThroughBlocks(std::function<void(Vector3)> func) {
-    for (int i=0; i<blocksLength; i++) {
+    for (int i = 0; i < blocksLength; i++) {
         Vector3 blockPosition = IndexToVector3(i);
         func(blockPosition);
     }
