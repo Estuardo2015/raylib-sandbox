@@ -19,7 +19,7 @@ public:
 };
 
 Game::Game() {
-    player = Player();
+    player = Player(CAMERA_FREE);
     world = World();
     world.GenerateWorld();
     blockDataManager = new BlockDataManager();
