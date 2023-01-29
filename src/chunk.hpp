@@ -2,11 +2,10 @@
 #define CHUNK_HPP
 
 #include "block.hpp"
-#include "chunk.hpp"
-#include "meshData.hpp"
 #include "utils.hpp"
 #include <functional>
 #include "raylib.h"
+#include "meshData.hpp"
 
 const int CHUNK_WIDTH = 16; // In blocks
 const int CHUNK_HEIGHT = 100;
@@ -16,17 +15,24 @@ public:
     Block blocks[CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_HEIGHT];
     int blocksLength = CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_HEIGHT;
     Vector2 worldPosition;
-    MeshData meshData;
 
     Chunk();
+    Chunk(Vector2);
     void SetBlock(Vector3 localPosition, Block block);
+    bool InRange(int);
+    bool InRangeHeight(int);
     Block GetBlock(Vector3 localPosition);
     Vector3 IndexToVector3(unsigned int idx);
     int Vector3ToIndex(Vector3 p);
+    MeshData GetChunkMeshData();
 };
 
 Chunk::Chunk() {
 
+}
+
+Chunk::Chunk(Vector2 wp) {
+    worldPosition = wp;
 }
 
 void Chunk::SetBlock(Vector3 localPosition, Block block) {
@@ -34,9 +40,30 @@ void Chunk::SetBlock(Vector3 localPosition, Block block) {
     blocks[index] = block;
 }
 
+bool Chunk::InRange(int axisCoordinate) {
+    if (axisCoordinate < 0 || axisCoordinate >= CHUNK_WIDTH)
+        return false;
+
+    return true;
+}
+
+bool Chunk::InRangeHeight(int ycoordinate) {
+    if (ycoordinate < 0 || ycoordinate >= CHUNK_HEIGHT)
+        return false;
+
+    return true;
+}
+
 Block Chunk::GetBlock(Vector3 localPosition) {
-    int index = Vector3ToIndex(localPosition);
-    return blocks[index];
+    if (InRange(localPosition.x) && InRangeHeight(localPosition.y) && InRange(localPosition.z))
+    {
+        int index = Vector3ToIndex(localPosition);
+        return blocks[index];
+    }
+
+    return Block(Air);
+
+    //return chunkData.worldReference.GetBlockFromChunkCoordinates(chunkData, chunkData.worldPosition.x + x, chunkData.worldPosition.y + y, chunkData.worldPosition.z
 }
 
 Vector3 Chunk::IndexToVector3(unsigned int idx) {
@@ -48,6 +75,18 @@ Vector3 Chunk::IndexToVector3(unsigned int idx) {
 
 int Chunk::Vector3ToIndex(Vector3 p) {
     return (p.z * CHUNK_WIDTH * CHUNK_HEIGHT) + (p.y * CHUNK_WIDTH) + p.x;
+}
+
+MeshData Chunk::GetChunkMeshData() {
+    MeshData meshData = MeshData{};
+
+    for (int i = 0; i < blocksLength; i++)
+    {
+        Vector3 position = IndexToVector3(i);
+        meshData.GetMeshData(this, position, blocks[i].type);
+    }
+
+    return meshData;
 }
 
 #endif

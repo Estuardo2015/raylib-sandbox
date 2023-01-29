@@ -29,8 +29,7 @@ void World::GenerateWorld() {
     for (int x = 0; x < WORLD_SIZE; x++) {
         for (int y = 0; y < WORLD_SIZE; y++)
         {
-            Chunk chunk = Chunk();
-            chunk.worldPosition = {float(x), float(y)};
+            Chunk chunk = Chunk({float(x), float(y)});
             GenerateBlocks(&chunk);
             chunkMap[x][y] = chunk;
         }
