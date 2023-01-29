@@ -23,6 +23,9 @@ public:
 
 BlockDataManager::BlockDataManager() {
     // NOTE: By default each cube is mapped to one part of texture atlas
+    Texture2D texture = LoadTexture("atlas.png");
+    Rectangle sourceRec = { x, y, width, height };
+
     Texture2D texture = LoadTexture("../res/dirt.png");    // Load map texture
     BlockTextureDictionary[Dirt] = texture;
 }

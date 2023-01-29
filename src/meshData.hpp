@@ -2,9 +2,9 @@
 #define MESHDATA_HPP
 
 #include "vector"
-#include "chunk.hpp"
 #include "../include/raymath.h"
 #include "direction.hpp"
+#include "block.hpp"
 
 class MeshData {
 public:
@@ -19,34 +19,35 @@ public:
 
     void GetFaceVertices(Direction, Vector3, BlockType);
 
-    void GetFaceDataIn(Direction, Chunk, Vector3, BlockType);
+    void GetFaceDataIn(Direction, Vector3, BlockType);
 
-    void GetMeshData(Chunk, Vector3, BlockType);
+    void GetMeshData(Vector3, BlockType);
 };
 
-void MeshData::GetMeshData(Chunk chunk, Vector3 location, BlockType blockType) {
+void MeshData::GetMeshData(Vector3 location, BlockType blockType) {
     if (blockType == Air) {
         return;
     }
 
     for (Direction direction: directions) {
-        Vector3 neighbourBlockCoordinates = Vector3Add(location, GetDirectionVector(direction));
-        Block neighborBlock = chunk.GetBlock(neighbourBlockCoordinates);
+        //Vector3 neighbourBlockCoordinates = Vector3Add(location, GetDirectionVector(direction));
+        //Block neighborBlock = chunk.GetBlock(neighbourBlockCoordinates);
 
         if (blockType == Water) {
             // TODO: Handle water
         } else {
-            GetFaceDataIn(direction, chunk, location, blockType);
+            GetFaceDataIn(direction, location, blockType);
         }
     }
 
     return;
 }
 
-void MeshData::GetFaceDataIn(Direction direction, Chunk chunk, Vector3 location, BlockType blockType) {
+void MeshData::GetFaceDataIn(Direction direction, Vector3 location, BlockType blockType) {
     GetFaceVertices(direction, location, blockType);
     AddQuadTriangles();
     //meshData.uv.AddRange(FaceUVs(direction, blockType));
+    Model model;
 }
 
 void MeshData::GetFaceVertices(Direction direction, Vector3 location, BlockType blockType) {

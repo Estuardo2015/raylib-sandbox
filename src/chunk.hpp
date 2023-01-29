@@ -33,6 +33,8 @@ public:
     int Vector3ToIndex(Vector3 p);
 
     MeshData GetChunkMeshData();
+
+    void RenderChunk();
 };
 
 Chunk::Chunk() {
@@ -89,10 +91,25 @@ MeshData Chunk::GetChunkMeshData() {
 
     for (int i = 0; i < blocksLength; i++) {
         Vector3 position = IndexToVector3(i);
-        meshData.GetMeshData(this, position, blocks[i].type);
+        meshData.GetMeshData(position, blocks[i].type);
     }
 
     return meshData;
+}
+
+void Chunk::RenderChunk() {
+    MeshData meshData = GetChunkMeshData();
+
+    Mesh mesh = Mesh{ 0 };
+    mesh.vertices = &meshData.vertices[0];
+    mesh.vertexCount = meshData.vertices.size();
+
+    mesh.indices = &meshData.indices[0];
+    mesh.triangleCount = mesh.vertexCount/9;
+
+    Model model = LoadModelFromMesh(mesh);
+
+    DrawModel(model, {worldPosition.x, worldPosition.y, 0}, 1, WHITE);
 }
 
 #endif

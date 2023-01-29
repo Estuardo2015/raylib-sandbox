@@ -15,21 +15,6 @@ int main() {
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
 
-    // Test Drawing Mesh
-    Mesh mesh = {0};
-    float vertices[] = {0.5, 0, 0,
-                        0, 0.5, 0,
-                        -0.5, 0, 0};
-    mesh.vertices = vertices;
-    mesh.vertexCount = 9;
-
-    unsigned short indices[] = {0, 1, 2};
-    mesh.indices = indices;
-    mesh.triangleCount = 1;
-
-    // Load test material
-    Material material = LoadMaterialDefault();
-
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
@@ -43,7 +28,7 @@ int main() {
 
         DrawGrid(10, 1.0f);
 
-        DrawMesh(mesh, material, MatrixIdentity());
+        //g.world.Render();
 
         EndMode3D();
 

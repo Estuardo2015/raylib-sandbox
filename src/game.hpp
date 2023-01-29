@@ -9,7 +9,6 @@
 #include "blockDataManager.hpp"
 
 class Game {
-    World world;
 
 public:
     Game();
@@ -19,6 +18,7 @@ public:
     void Draw();
 
     Player player;
+    World world;
 };
 
 Game::Game() {
