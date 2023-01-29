@@ -3,18 +3,9 @@
 
 #include "unordered_map"
 #include "raylib.h"
+#include "blockDataManager.hpp"
 
 const float BLOCK_SIZE = 0.5;
-
-enum BlockType {
-    Air,
-    Water,
-    Dirt,
-    Grass_Dirt,
-    Stone
-};
-
-std::unordered_map<unsigned short int, Color> BLOCK_DICT {{Water,BLUE}, {Dirt,BROWN}, {Grass_Dirt,DARKGREEN}, {Stone,GRAY}};
 
 class Block {
     public:

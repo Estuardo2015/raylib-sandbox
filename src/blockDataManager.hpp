@@ -5,13 +5,20 @@
 #include "unordered_map"
 #include "block.hpp"
 
+enum BlockType {
+    Air,
+    Water,
+    Dirt,
+    Grass_Dirt,
+    Stone
+};
+
 class BlockDataManager {
 
 public:
     std::unordered_map<BlockType, Texture2D> BlockTextureDictionary;
 
     BlockDataManager();
-
 };
 
 BlockDataManager::BlockDataManager() {

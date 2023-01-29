@@ -3,6 +3,7 @@
 
 #include "block.hpp"
 #include "chunk.hpp"
+#include "meshData.hpp"
 #include "utils.hpp"
 #include <functional>
 #include "raylib.h"
@@ -15,10 +16,9 @@ public:
     Block blocks[CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_HEIGHT];
     int blocksLength = CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_HEIGHT;
     Vector2 worldPosition;
-    float noiseScale = 0.3;
+    MeshData meshData;
 
     Chunk();
-    void IterateThroughBlocks(std::function<void(Vector3)> func);
     void SetBlock(Vector3 localPosition, Block block);
     Block GetBlock(Vector3 localPosition);
     Vector3 IndexToVector3(unsigned int idx);
@@ -27,13 +27,6 @@ public:
 
 Chunk::Chunk() {
 
-}
-
-void Chunk::IterateThroughBlocks(std::function<void(Vector3)> func) {
-    for (int i=0; i<blocksLength; i++) {
-        Vector3 blockPosition = IndexToVector3(i);
-        func(blockPosition);
-    }
 }
 
 void Chunk::SetBlock(Vector3 localPosition, Block block) {
