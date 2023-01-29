@@ -12,18 +12,26 @@ const int CHUNK_HEIGHT = 100;
 
 class Chunk {
 public:
-    Block blocks[CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_HEIGHT];
-    int blocksLength = CHUNK_WIDTH*CHUNK_WIDTH*CHUNK_HEIGHT;
+    Block blocks[CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT];
+    int blocksLength = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
     Vector2 worldPosition;
 
     Chunk();
+
     Chunk(Vector2);
+
     void SetBlock(Vector3 localPosition, Block block);
+
     bool InRange(int);
+
     bool InRangeHeight(int);
+
     Block GetBlock(Vector3 localPosition);
+
     Vector3 IndexToVector3(unsigned int idx);
+
     int Vector3ToIndex(Vector3 p);
+
     MeshData GetChunkMeshData();
 };
 
@@ -55,8 +63,7 @@ bool Chunk::InRangeHeight(int ycoordinate) {
 }
 
 Block Chunk::GetBlock(Vector3 localPosition) {
-    if (InRange(localPosition.x) && InRangeHeight(localPosition.y) && InRange(localPosition.z))
-    {
+    if (InRange(localPosition.x) && InRangeHeight(localPosition.y) && InRange(localPosition.z)) {
         int index = Vector3ToIndex(localPosition);
         return blocks[index];
     }
@@ -80,8 +87,7 @@ int Chunk::Vector3ToIndex(Vector3 p) {
 MeshData Chunk::GetChunkMeshData() {
     MeshData meshData = MeshData{};
 
-    for (int i = 0; i < blocksLength; i++)
-    {
+    for (int i = 0; i < blocksLength; i++) {
         Vector3 position = IndexToVector3(i);
         meshData.GetMeshData(this, position, blocks[i].type);
     }

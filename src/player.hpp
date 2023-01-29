@@ -20,23 +20,25 @@ public:
     Camera3D camera{};
 
     void Update();
+
     Player(CameraMode cm);
+
     Player();
 };
 
 Player::Player(CameraMode cm) {
     // Initialize player state
-    position = (Vector3){ 4.0f, 0.5f, 4.0f };
-    direction = (Vector3){ 0.0f, 1.0f, 0.0f };
-    velocity = (Vector3){ 0.0f, 0.0f, 0.0f };
+    position = (Vector3) {4.0f, 0.5f, 4.0f};
+    direction = (Vector3) {0.0f, 1.0f, 0.0f};
+    velocity = (Vector3) {0.0f, 0.0f, 0.0f};
     speed = 0.125f / 20;
-    oldMousePosition = (Vector2){0.0f, 1.0f};
+    oldMousePosition = (Vector2) {0.0f, 1.0f};
 
     // Define the camera to look into our 3d world
-    camera = { 0 };
+    camera = {0};
     camera.position = position;  // Camera position
     camera.target = direction;    // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.up = (Vector3) {0.0f, 1.0f, 0.0f};        // Camera up vector (rotation towards target)
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
     cameraMode = cm;
@@ -51,7 +53,7 @@ Player::Player() {
 void Player::Update() {
     if (cameraMode == CAMERA_CUSTOM) {
         // Handle camera movement
-        Vector2 mousePositionDelta = { 0.0f, 0.0f };
+        Vector2 mousePositionDelta = {0.0f, 0.0f};
         Vector2 mousePos = GetMousePosition();
 
         mousePositionDelta.x = mousePos.x - oldMousePosition.x;
@@ -77,7 +79,7 @@ void Player::Update() {
         float forwardZ = sx * sy;
 
         // Handle keys & mouse
-        Vector3 moveDir = { 0 };
+        Vector3 moveDir = {0};
         if (IsKeyDown(KEY_W)) {
             moveDir.z += sx;
             moveDir.x += cx;

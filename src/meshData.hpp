@@ -14,9 +14,13 @@ public:
     std::vector<float> normals;
 
     void AddVertex(Vector3);
+
     void AddQuadTriangles();
+
     void GetFaceVertices(Direction, Vector3, BlockType);
+
     void GetFaceDataIn(Direction, Chunk, Vector3, BlockType);
+
     void GetMeshData(Chunk, Vector3, BlockType);
 };
 
@@ -25,7 +29,7 @@ void MeshData::GetMeshData(Chunk chunk, Vector3 location, BlockType blockType) {
         return;
     }
 
-    for (Direction direction : directions) {
+    for (Direction direction: directions) {
         Vector3 neighbourBlockCoordinates = Vector3Add(location, GetDirectionVector(direction));
         Block neighborBlock = chunk.GetBlock(neighbourBlockCoordinates);
 

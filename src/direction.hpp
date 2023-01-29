@@ -13,12 +13,12 @@ enum Direction {
 };
 
 Direction directions[] = {
-    Backward,
-    Down,
-    Forward,
-    Left,
-    Right,
-    Up
+        Backward,
+        Down,
+        Forward,
+        Left,
+        Right,
+        Up
 };
 
 Vector3 GetDirectionVector(Direction direction) {

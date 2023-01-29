@@ -8,10 +8,12 @@
 const float BLOCK_SIZE = 0.5;
 
 class Block {
-    public:
-        BlockType type;
-        Block();
-        Block(BlockType);
+public:
+    BlockType type;
+
+    Block();
+
+    Block(BlockType);
 };
 
 Block::Block() {
