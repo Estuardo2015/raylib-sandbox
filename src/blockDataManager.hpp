@@ -80,4 +80,6 @@ json BlockDataManager::LoadBlockJSON(const char * blockJSONPath) {
     return json::parse(file);
 }
 
+BlockDataManager *blockDataManager;
+
 #endif

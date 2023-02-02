@@ -36,6 +36,8 @@ Vector3 GetDirectionVector(Direction direction) {
         case Backward:
             return {0, 0, -1};
     }
+
+    return {0, 0, 0};
 }
 
 #endif

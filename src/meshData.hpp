@@ -8,22 +8,21 @@
 
 class MeshData {
 public:
-    std::vector<float> vertices;
-    std::vector<unsigned short> indices;
-    std::vector<float> texcoords;
-    std::vector<float> normals;
+    Model model = { 0 };
     std::vector<Mesh> meshes;
+    std::vector<Material> materials;
+    std::vector<int> meshMaterials;
 
-    void AddVertex(Vector3);
+    MeshData();
 
-    void AddQuadTriangles();
-
-    void GetFaceVertices(Direction, Vector3, BlockType);
-
-    void GetFaceMesh(Direction direction, Vector3 location, BlockType blockType);
+    void AddFaceQuad(Direction direction, Vector3 location, BlockType blockType);
 
     void GetMeshData(Vector3, BlockType);
 };
+
+MeshData::MeshData() {
+    model.transform = MatrixIdentity();
+}
 
 void MeshData::GetMeshData(Vector3 location, BlockType blockType) {
     if (blockType == Air) {
@@ -37,75 +36,95 @@ void MeshData::GetMeshData(Vector3 location, BlockType blockType) {
         if (blockType == Water) {
             // TODO: Handle water
         } else {
-            GetFaceMesh(direction, location, blockType);
+            AddFaceQuad(direction, location, blockType);
         }
     }
-
-    return;
 }
 
-void MeshData::GetFaceMesh(Direction direction, Vector3 location, BlockType blockType) {
-    GetFaceVertices(direction, location, blockType);
-    AddQuadTriangles();
-    //meshData.uv.AddRange(FaceUVs(direction, blockType));
-    Model model;
-}
+void MeshData::AddFaceQuad(Direction direction, Vector3 location, BlockType blockType) {
+    std::vector<float> vertices;
 
-void MeshData::GetFaceVertices(Direction direction, Vector3 location, BlockType blockType) {
     switch (direction) {
         case Backward:
-            AddVertex(Vector3{location.x - 0.5f, location.y - 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x - 0.5f, location.y + 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y + 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y - 0.5f, location.z - 0.5f});
+            vertices = {location.x - 0.5f, location.y - 0.5f, location.z - 0.5f,
+                        location.x - 0.5f, location.y + 0.5f, location.z - 0.5f,
+                        location.x + 0.5f, location.y + 0.5f, location.z - 0.5f,
+                        location.x + 0.5f, location.y - 0.5f, location.z - 0.5f};
             break;
         case Forward:
-            AddVertex(Vector3{location.x + 0.5f, location.y - 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y + 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x - 0.5f, location.y + 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x - 0.5f, location.y - 0.5f, location.z + 0.5f});
+            vertices = {location.x + 0.5f, location.y - 0.5f, location.z + 0.5f,
+                        location.x + 0.5f, location.y + 0.5f, location.z + 0.5f,
+                        location.x - 0.5f, location.y + 0.5f, location.z + 0.5f,
+                        location.x - 0.5f, location.y - 0.5f, location.z + 0.5f};
             break;
         case Left:
-            AddVertex(Vector3{location.x - 0.5f, location.y - 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x - 0.5f, location.y + 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x - 0.5f, location.y + 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x - 0.5f, location.y - 0.5f, location.z - 0.5f});
+            vertices = {location.x - 0.5f, location.y - 0.5f, location.z + 0.5f,
+                        location.x - 0.5f, location.y + 0.5f, location.z + 0.5f,
+                        location.x - 0.5f, location.y + 0.5f, location.z - 0.5f,
+                        location.x - 0.5f, location.y - 0.5f, location.z - 0.5f};
             break;
         case Right:
-            AddVertex(Vector3{location.x + 0.5f, location.y - 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y + 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y + 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y - 0.5f, location.z + 0.5f});
+            vertices = {location.x + 0.5f, location.y - 0.5f, location.z - 0.5f,
+                        location.x + 0.5f, location.y + 0.5f, location.z - 0.5f,
+                        location.x + 0.5f, location.y + 0.5f, location.z + 0.5f,
+                        location.x + 0.5f, location.y - 0.5f, location.z + 0.5f};
             break;
         case Down:
-            AddVertex(Vector3{location.x - 0.5f, location.y - 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y - 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y - 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x - 0.5f, location.y - 0.5f, location.z + 0.5f});
+            vertices = {location.x - 0.5f, location.y - 0.5f, location.z - 0.5f,
+                        location.x + 0.5f, location.y - 0.5f, location.z - 0.5f,
+                        location.x + 0.5f, location.y - 0.5f, location.z + 0.5f,
+                        location.x - 0.5f, location.y - 0.5f, location.z + 0.5f};
             break;
         case Up:
-            AddVertex(Vector3{location.x - 0.5f, location.y + 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y + 0.5f, location.z + 0.5f});
-            AddVertex(Vector3{location.x + 0.5f, location.y + 0.5f, location.z - 0.5f});
-            AddVertex(Vector3{location.x - 0.5f, location.y + 0.5f, location.z - 0.5f});
+            vertices = {location.x - 0.5f, location.y + 0.5f, location.z + 0.5f,
+                        location.x + 0.5f, location.y + 0.5f, location.z + 0.5f,
+                        location.x + 0.5f, location.y + 0.5f, location.z - 0.5f,
+                        location.x - 0.5f, location.y + 0.5f, location.z - 0.5f};
             break;
     }
-}
 
-void MeshData::AddVertex(Vector3 vertex) {
-    vertices.push_back(vertex.x);
-    vertices.push_back(vertex.y);
-    vertices.push_back(vertex.z);
-}
+    unsigned short indices[6] = {
+            0, 1, 2,
+            2, 3, 0
+    };
 
-void MeshData::AddQuadTriangles() {
-    indices.push_back((vertices.size() / 3) - 4);
-    indices.push_back((vertices.size() / 3) - 3);
-    indices.push_back((vertices.size() / 3) - 2);
+    float texcoords[8] = {
+            0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+    };
 
-    indices.push_back((vertices.size() / 3) - 4);
-    indices.push_back((vertices.size() / 3) - 2);
-    indices.push_back((vertices.size() / 3) - 1);
+    // Create new mesh
+    Mesh mesh { 0 };
+    mesh.vertexCount = 4;
+    mesh.vertices = &vertices[0];
+
+    mesh.indices = indices;
+    mesh.triangleCount = 2;
+
+    mesh.texcoords = texcoords;
+
+    UploadMesh(&mesh, false);
+
+    // Load texture
+    Material material = LoadMaterialDefault();
+    Texture texture = blockDataManager->BlockTextureDictionary[blockType][direction];
+    SetMaterialTexture(&material, MATERIAL_MAP_DIFFUSE, texture);
+
+    // Add mesh to the model
+    meshes.push_back(mesh);
+    model.meshCount = meshes.size();
+    model.meshes = &meshes[0];
+
+    // Add material to the model
+    materials.push_back(material);
+    model.materialCount = materials.size();
+    model.materials = &materials[0];
+
+    // Update meshMaterial array
+    meshMaterials.push_back(meshMaterials.size());
+    model.meshMaterial = &meshMaterials[0];
 }
 
 #endif
