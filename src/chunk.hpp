@@ -87,7 +87,7 @@ int Chunk::Vector3ToIndex(Vector3 p) {
 }
 
 MeshData Chunk::GetChunkMeshData() {
-            MeshData meshData = MeshData{};
+    MeshData meshData = MeshData{};
 
     for (int i = 0; i < blocksLength; i++) {
         Vector3 position = IndexToVector3(i);
@@ -98,18 +98,9 @@ MeshData Chunk::GetChunkMeshData() {
 }
 
 void Chunk::RenderChunk() {
-//    MeshData meshData = GetChunkMeshData();
-//
-//    Mesh mesh = Mesh{ 0 };
-//    mesh.vertices = &meshData.vertices[0];
-//    mesh.vertexCount = meshData.vertices.size();
-//
-//    mesh.indices = &meshData.indices[0];
-//    mesh.triangleCount = mesh.vertexCount/9;
-//
-//    Model model = LoadModelFromMesh(mesh);
-//
-//    DrawModel(model, {worldPosition.x, worldPosition.y, 0}, 1, WHITE);
+    MeshData meshData = GetChunkMeshData();
+
+    DrawModel(meshData.model, {worldPosition.x, worldPosition.y, 0}, 1, WHITE);
 }
 
 #endif

@@ -16,7 +16,6 @@ int main() {
 
     MeshData meshData = MeshData();
     meshData.GetMeshData({0, 0, 0}, Grass);
-
     //--------------------------------------------------------------------------------------
 
     // Main game loop

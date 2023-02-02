@@ -22,10 +22,11 @@ public:
 };
 
 Game::Game() {
+    blockDataManager = new BlockDataManager();
+
     player = Player(CAMERA_FREE);
     world = World();
     world.GenerateWorld();
-    blockDataManager = new BlockDataManager();
 }
 
 void Game::Update() {

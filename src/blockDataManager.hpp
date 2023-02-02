@@ -21,7 +21,10 @@ enum BlockType {
 };
 
 std::unordered_map<std::string, BlockType> BlockDict {
-        {"grass", Grass}
+        {"grass", Grass},
+        {"water", Water},
+        {"dirt", Dirt},
+        {"stone", Stone}
 };
 
 class BlockDataManager {
@@ -48,13 +51,13 @@ BlockDataManager::BlockDataManager() {
 
         // Iterate through directions
         for (auto& blockDirection : blockToDirections.value().items()) {
-            // Get the coordinates of the atlas in the atlas
+            // Get the coordinates of the texture in the atlas
             std::string dir = blockDirection.key();
             float x = blockDirection.value()["x"];
             float y = blockDirection.value()["y"];
 
             // Get subimage using coordinates
-            Rectangle rect = {x, y, BLOCK_TEXTURE_SIZE, BLOCK_TEXTURE_SIZE};
+            Rectangle rect = {x * BLOCK_TEXTURE_SIZE, y * BLOCK_TEXTURE_SIZE, BLOCK_TEXTURE_SIZE, BLOCK_TEXTURE_SIZE};
             Image subImage = ImageFromImage(atlas, rect);
             Texture tex = LoadTextureFromImage(subImage);
 
@@ -69,8 +72,6 @@ BlockDataManager::BlockDataManager() {
                 BlockTextureDictionary[blockType][Left] = tex;
                 BlockTextureDictionary[blockType][Right] = tex;
             }
-
-            //UnloadTexture(tex);
         }
     }
 }
