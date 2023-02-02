@@ -19,13 +19,14 @@ public:
 
     Player player;
     World world;
+    BlockDataManager blockDataManager;
 };
 
 Game::Game() {
     player = Player(CAMERA_FREE);
     world = World();
     world.GenerateWorld();
-    blockDataManager = new BlockDataManager();
+    blockDataManager = BlockDataManager();
 }
 
 void Game::Update() {

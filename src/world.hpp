@@ -68,7 +68,7 @@ void World::GenerateBlocks(Chunk *chunk) {
                     }
 
                 } else if (y == groundPosition) {
-                    blockType = Grass_Dirt;
+                    blockType = Grass;
                 }
 
                 chunk->SetBlock({x, y, z}, Block(blockType));

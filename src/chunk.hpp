@@ -87,7 +87,7 @@ int Chunk::Vector3ToIndex(Vector3 p) {
 }
 
 MeshData Chunk::GetChunkMeshData() {
-    MeshData meshData = MeshData{};
+            MeshData meshData = MeshData{};
 
     for (int i = 0; i < blocksLength; i++) {
         Vector3 position = IndexToVector3(i);

@@ -12,6 +12,7 @@ public:
     std::vector<unsigned short> indices;
     std::vector<float> texcoords;
     std::vector<float> normals;
+    std::vector<Mesh> meshes;
 
     void AddVertex(Vector3);
 
@@ -19,7 +20,7 @@ public:
 
     void GetFaceVertices(Direction, Vector3, BlockType);
 
-    void GetFaceDataIn(Direction, Vector3, BlockType);
+    void GetFaceMesh(Direction direction, Vector3 location, BlockType blockType);
 
     void GetMeshData(Vector3, BlockType);
 };
@@ -36,14 +37,14 @@ void MeshData::GetMeshData(Vector3 location, BlockType blockType) {
         if (blockType == Water) {
             // TODO: Handle water
         } else {
-            GetFaceDataIn(direction, location, blockType);
+            GetFaceMesh(direction, location, blockType);
         }
     }
 
     return;
 }
 
-void MeshData::GetFaceDataIn(Direction direction, Vector3 location, BlockType blockType) {
+void MeshData::GetFaceMesh(Direction direction, Vector3 location, BlockType blockType) {
     GetFaceVertices(direction, location, blockType);
     AddQuadTriangles();
     //meshData.uv.AddRange(FaceUVs(direction, blockType));
