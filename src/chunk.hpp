@@ -33,8 +33,6 @@ public:
 
     int Vector3ToIndex(Vector3 p);
 
-    void Update();
-
     void Render();
 };
 
@@ -87,10 +85,6 @@ int Chunk::Vector3ToIndex(Vector3 p) {
     return (p.z * CHUNK_WIDTH * CHUNK_HEIGHT) + (p.y * CHUNK_WIDTH) + p.x;
 }
 
-void Chunk::Update() {
-
-}
-
 void Chunk::Render() {
     for (int i = 0; i < blocksLength; i++) {
         Vector3 position = IndexToVector3(i);
@@ -105,7 +99,7 @@ void Chunk::Render() {
         }
     }
 
-    DrawModel(meshData.model, {worldPosition.x, worldPosition.y, 0}, 1, WHITE);
+    //DrawModel(meshData.model, {worldPosition.x, worldPosition.y, 0}, 1, WHITE);
 }
 
 #endif

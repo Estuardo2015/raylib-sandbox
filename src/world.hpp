@@ -22,8 +22,6 @@ public:
 
     void GenerateBlocks(Chunk *chunk);
 
-    void Update();
-
     void Render();
 };
 
@@ -69,10 +67,6 @@ void World::GenerateBlocks(Chunk *chunk) {
             }
         }
     }
-}
-
-void World::Update() {
-
 }
 
 void World::Render() {

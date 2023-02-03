@@ -5,6 +5,7 @@
 #include "unordered_map"
 #include "direction.hpp"
 #include "block.hpp"
+#include "rlgl.h"
 
 class MeshData {
 public:
@@ -30,11 +31,9 @@ void MeshData::GetMeshData(Direction direction, Vector3 location, BlockType bloc
     }
 
     if (neighborBlock == Air) {
-//            if (blockType == Water) {
-//                // TODO: Handle water
-//            } else {
-//                AddFaceQuad(direction, location, blockType);
-//            }
+//        if (blockType == Water) {
+//            // TODO: Handle water
+//        }
 
         AddFaceQuad(direction, location, blockType);
     }

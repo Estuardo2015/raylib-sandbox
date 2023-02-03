@@ -31,8 +31,6 @@ Game::Game() {
 
 void Game::Update() {
     player.Update();
-
-    world.Update();
 }
 
 void Game::Draw() {
