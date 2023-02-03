@@ -8,13 +8,13 @@
 #include <string>
 #include "blockDataManager.hpp"
 
-const int WORLD_SIZE = 1; // In chunks
+const int WORLD_WIDTH = 1; // In chunks
 
 class World {
 public:
     float noiseScale = 0.03;
     int waterThreshold = 50;
-    Chunk chunkMap[WORLD_SIZE][WORLD_SIZE];
+    Chunk chunkMap[WORLD_WIDTH][WORLD_WIDTH];
 
     World();
 
@@ -30,8 +30,8 @@ World::World() {
 }
 
 void World::GenerateWorld() {
-    for (int x = 0; x < WORLD_SIZE; x++) {
-        for (int y = 0; y < WORLD_SIZE; y++) {
+    for (int x = 0; x < WORLD_WIDTH; x++) {
+        for (int y = 0; y < WORLD_WIDTH; y++) {
             Chunk chunk = Chunk({float(x), float(y)});
             GenerateBlocks(&chunk);
             chunkMap[x][y] = chunk;
@@ -68,10 +68,10 @@ void World::GenerateBlocks(Chunk *chunk) {
 }
 
 void World::Render() {
-    for (int x = 0; x < WORLD_SIZE; x++) {
-        for (int z = 0; z < WORLD_SIZE; z++) {
+    for (int x = 0; x < WORLD_WIDTH; x++) {
+        for (int z = 0; z < WORLD_WIDTH; z++) {
             Chunk chunk = chunkMap[x][z];
-            chunk.Render();
+            chunk.Render(x, z);
         }
     }
 }

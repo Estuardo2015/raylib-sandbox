@@ -33,7 +33,7 @@ public:
 
     int Vector3ToIndex(Vector3 p);
 
-    void Render();
+    void Render(int, int);
 };
 
 Chunk::Chunk() {
@@ -85,9 +85,11 @@ int Chunk::Vector3ToIndex(Vector3 p) {
     return (p.z * CHUNK_WIDTH * CHUNK_HEIGHT) + (p.y * CHUNK_WIDTH) + p.x;
 }
 
-void Chunk::Render() {
+void Chunk::Render(int worldX, int worldZ) {
     for (int i = 0; i < blocksLength; i++) {
         Vector3 position = IndexToVector3(i);
+        position.x = (CHUNK_WIDTH * worldX) + position.x;
+        position.z = (CHUNK_WIDTH * worldZ) + position.z;
 
         // Get neighbor blocks
         std::unordered_map<Direction, BlockType> neighbors;
