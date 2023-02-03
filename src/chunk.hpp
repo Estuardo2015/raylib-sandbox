@@ -8,7 +8,7 @@
 #include "meshData.hpp"
 
 const int CHUNK_WIDTH = 16; // 16 In blocks
-const int CHUNK_HEIGHT = 16; // 100
+const int CHUNK_HEIGHT = 100; // 100
 
 class Chunk {
 public:
@@ -98,8 +98,6 @@ void Chunk::Render() {
             meshData.GetMeshData(direction, position, blocks[i].type, neighborBlock.type);
         }
     }
-
-    //DrawModel(meshData.model, {worldPosition.x, worldPosition.y, 0}, 1, WHITE);
 }
 
 #endif

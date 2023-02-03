@@ -56,9 +56,7 @@ void World::GenerateBlocks(Chunk *chunk) {
 //                    } else {
 //                        blockType = Air;
 //                    }
-
                     blockType = Air;
-
                 } else if (y == groundPosition) {
                     blockType = Grass;
                 }
