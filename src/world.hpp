@@ -22,6 +22,8 @@ public:
 
     void GenerateBlocks(Chunk *chunk);
 
+    void Update();
+
     void Render();
 };
 
@@ -51,11 +53,13 @@ void World::GenerateBlocks(Chunk *chunk) {
             for (float y = 0; y < CHUNK_HEIGHT; y++) {
                 BlockType blockType = Dirt;
                 if (y > groundPosition) {
-                    if (y < waterThreshold) {
-                        blockType = Water;
-                    } else {
-                        blockType = Air;
-                    }
+//                    if (y < waterThreshold) {
+//                        blockType = Water;
+//                    } else {
+//                        blockType = Air;
+//                    }
+
+                    blockType = Air;
 
                 } else if (y == groundPosition) {
                     blockType = Grass;
@@ -67,11 +71,15 @@ void World::GenerateBlocks(Chunk *chunk) {
     }
 }
 
+void World::Update() {
+
+}
+
 void World::Render() {
     for (int x = 0; x < WORLD_SIZE; x++) {
         for (int z = 0; z < WORLD_SIZE; z++) {
             Chunk chunk = chunkMap[x][z];
-            chunk.RenderChunk();
+            chunk.Render();
         }
     }
 }

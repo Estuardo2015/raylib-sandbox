@@ -2,7 +2,7 @@
 #define MESHDATA_HPP
 
 #include "vector"
-#include "../include/raymath.h"
+#include "unordered_map"
 #include "direction.hpp"
 #include "block.hpp"
 
@@ -17,27 +17,26 @@ public:
 
     void AddFaceQuad(Direction direction, Vector3 location, BlockType blockType);
 
-    void GetMeshData(Vector3, BlockType);
+    void GetMeshData(Direction, Vector3, BlockType, BlockType);
 };
 
 MeshData::MeshData() {
     model.transform = MatrixIdentity();
 }
 
-void MeshData::GetMeshData(Vector3 location, BlockType blockType) {
+void MeshData::GetMeshData(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock) {
     if (blockType == Air) {
         return;
     }
 
-    for (Direction direction: directions) {
-        //Vector3 neighbourBlockCoordinates = Vector3Add(location, GetDirectionVector(direction));
-        //Block neighborBlock = chunk.GetBlock(neighbourBlockCoordinates);
+    if (neighborBlock == Air) {
+//            if (blockType == Water) {
+//                // TODO: Handle water
+//            } else {
+//                AddFaceQuad(direction, location, blockType);
+//            }
 
-        if (blockType == Water) {
-            // TODO: Handle water
-        } else {
-            AddFaceQuad(direction, location, blockType);
-        }
+        AddFaceQuad(direction, location, blockType);
     }
 }
 

@@ -5,8 +5,6 @@
 #include "raylib.h"
 #include "blockDataManager.hpp"
 
-const float BLOCK_SIZE = 0.5;
-
 class Block {
 public:
     BlockType type;

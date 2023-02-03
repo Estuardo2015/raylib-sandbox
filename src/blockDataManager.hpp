@@ -59,21 +59,25 @@ BlockDataManager::BlockDataManager() {
             // Get subimage using coordinates
             Rectangle rect = {x * BLOCK_TEXTURE_SIZE, y * BLOCK_TEXTURE_SIZE, BLOCK_TEXTURE_SIZE, BLOCK_TEXTURE_SIZE};
             Image subImage = ImageFromImage(atlas, rect);
-            Texture tex = LoadTextureFromImage(subImage);
+            Texture subTexture = LoadTextureFromImage(subImage);
 
             // Set atlas to the block direction
             if (dir == "top") {
-                BlockTextureDictionary[blockType][Up] = tex;
+                BlockTextureDictionary[blockType][Up] = subTexture;
             } else if (dir == "bottom") {
-                BlockTextureDictionary[blockType][Down] = tex;
+                BlockTextureDictionary[blockType][Down] = subTexture;
             } else if (dir == "side") {
-                BlockTextureDictionary[blockType][Forward] = tex;
-                BlockTextureDictionary[blockType][Backward] = tex;
-                BlockTextureDictionary[blockType][Left] = tex;
-                BlockTextureDictionary[blockType][Right] = tex;
+                BlockTextureDictionary[blockType][Forward] = subTexture;
+                BlockTextureDictionary[blockType][Backward] = subTexture;
+                BlockTextureDictionary[blockType][Left] = subTexture;
+                BlockTextureDictionary[blockType][Right] = subTexture;
             }
+
+            UnloadImage(subImage);
         }
     }
+
+    UnloadImage(atlas);
 }
 
 json BlockDataManager::LoadBlockJSON(const char * blockJSONPath) {
