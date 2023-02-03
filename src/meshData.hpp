@@ -9,21 +9,10 @@
 
 class MeshData {
 public:
-    Model model = { 0 };
-    std::vector<Mesh> meshes;
-    std::vector<Material> materials;
-    std::vector<int> meshMaterials;
-
-    MeshData();
-
     void AddFaceQuad(Direction direction, Vector3 location, BlockType blockType);
 
     void GetMeshData(Direction, Vector3, BlockType, BlockType);
 };
-
-MeshData::MeshData() {
-    model.transform = MatrixIdentity();
-}
 
 void MeshData::GetMeshData(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock) {
     if (blockType == Air) {
