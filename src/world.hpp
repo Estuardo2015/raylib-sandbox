@@ -22,6 +22,8 @@ public:
 
     void GenerateBlocks(Chunk *chunk);
 
+    void Update();
+
     void Render();
 };
 
@@ -67,11 +69,19 @@ void World::GenerateBlocks(Chunk *chunk) {
     }
 }
 
+void World::Update() {
+    for (int x = 0; x < WORLD_WIDTH; x++) {
+        for (int z = 0; z < WORLD_WIDTH; z++) {
+            chunkMap[x][z].Update(x, z);
+        }
+    }
+}
+
 void World::Render() {
     for (int x = 0; x < WORLD_WIDTH; x++) {
         for (int z = 0; z < WORLD_WIDTH; z++) {
             Chunk chunk = chunkMap[x][z];
-            chunk.Render(x, z);
+            chunk.Render();
         }
     }
 }

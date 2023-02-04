@@ -7,14 +7,25 @@
 #include "block.hpp"
 #include "rlgl.h"
 
-class MeshData {
+class FaceMesh {
 public:
-    void AddFaceQuad(Direction direction, Vector3 location, BlockType blockType);
-
-    void GetMeshData(Direction, Vector3, BlockType, BlockType);
+    Texture texture;
+    std::pair<float, float> texcoords[4];
+    float vertices[4][3];
 };
 
-void MeshData::GetMeshData(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock) {
+class MeshData {
+public:
+    std::vector<FaceMesh> faceMeshes;
+
+    void GenerateMeshData(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock);
+
+    void AddFaceQuad(Direction direction, Vector3 location, BlockType blockType);
+
+    void RenderFaceQuad(FaceMesh);
+};
+
+void MeshData::GenerateMeshData(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock) {
     if (blockType == Air) {
         return;
     }
@@ -29,53 +40,154 @@ void MeshData::GetMeshData(Direction direction, Vector3 location, BlockType bloc
 }
 
 void MeshData::AddFaceQuad(Direction direction, Vector3 location, BlockType blockType) {
-    Texture texture = blockDataManager->BlockTextureDictionary[blockType][direction];
+    FaceMesh faceMesh;
 
-    rlCheckRenderBatchLimit(6);
-
-    rlSetTexture(texture.id);
-
-    rlBegin(RL_QUADS);
+    faceMesh.texture = blockDataManager->BlockTextureDictionary[blockType][direction];
 
     switch (direction) {
         case Forward:
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z + 0.5f);
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z + 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z + 0.5f);
+            faceMesh.texcoords[0].first = 1.0f; faceMesh.texcoords[0].second = 1.0f;
+            faceMesh.vertices[0][0] = location.x - 0.5f;
+            faceMesh.vertices[0][1] = location.y - 0.5f;
+            faceMesh.vertices[0][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[1].first = 0.0f; faceMesh.texcoords[1].second = 1.0f;
+            faceMesh.vertices[1][0] = location.x + 0.5f;
+            faceMesh.vertices[1][1] = location.y - 0.5f;
+            faceMesh.vertices[1][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[2].first = 0.0f; faceMesh.texcoords[2].second = 0.0f;
+            faceMesh.vertices[2][0] = location.x + 0.5f;
+            faceMesh.vertices[2][1] = location.y + 0.5f;
+            faceMesh.vertices[2][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[3].first = 1.0f; faceMesh.texcoords[3].second = 0.0f;
+            faceMesh.vertices[3][0] = location.x - 0.5f;
+            faceMesh.vertices[3][1] = location.y + 0.5f;
+            faceMesh.vertices[3][2] = location.z + 0.5f;
             break;
         case Backward:
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z - 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z - 0.5f);
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z - 0.5f);
+            faceMesh.texcoords[0].first = 0.0f; faceMesh.texcoords[0].second = 1.0f;
+            faceMesh.vertices[0][0] = location.x - 0.5f;
+            faceMesh.vertices[0][1] = location.y - 0.5f;
+            faceMesh.vertices[0][2] = location.z - 0.5f;
+
+            faceMesh.texcoords[1].first = 0.0f; faceMesh.texcoords[1].second = 0.0f;
+            faceMesh.vertices[1][0] = location.x - 0.5f;
+            faceMesh.vertices[1][1] = location.y + 0.5f;
+            faceMesh.vertices[1][2] = location.z - 0.5f;
+
+            faceMesh.texcoords[2].first = 1.0f; faceMesh.texcoords[2].second = 0.0f;
+            faceMesh.vertices[2][0] = location.x + 0.5f;
+            faceMesh.vertices[2][1] = location.y + 0.5f;
+            faceMesh.vertices[2][2] = location.z - 0.5f;
+
+            faceMesh.texcoords[3].first = 1.0f; faceMesh.texcoords[3].second = 1.0f;
+            faceMesh.vertices[3][0] = location.x + 0.5f;
+            faceMesh.vertices[3][1] = location.y - 0.5f;
+            faceMesh.vertices[3][2] = location.z - 0.5f;
             break;
         case Up:
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z - 0.5f);
+            faceMesh.texcoords[0].first = 0.0f; faceMesh.texcoords[0].second = 1.0f;
+            faceMesh.vertices[0][0] = location.x - 0.5f;
+            faceMesh.vertices[0][1] = location.y + 0.5f;
+            faceMesh.vertices[0][2] = location.z - 0.5f;
+
+            faceMesh.texcoords[1].first = 0.0f; faceMesh.texcoords[1].second = 0.0f;
+            faceMesh.vertices[1][0] = location.x - 0.5f;
+            faceMesh.vertices[1][1] = location.y + 0.5f;
+            faceMesh.vertices[1][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[2].first = 1.0f; faceMesh.texcoords[2].second = 0.0f;
+            faceMesh.vertices[2][0] = location.x + 0.5f;
+            faceMesh.vertices[2][1] = location.y + 0.5f;
+            faceMesh.vertices[2][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[3].first = 1.0f; faceMesh.texcoords[3].second = 1.0f;
+            faceMesh.vertices[3][0] = location.x + 0.5f;
+            faceMesh.vertices[3][1] = location.y + 0.5f;
+            faceMesh.vertices[3][2] = location.z - 0.5f;
             break;
         case Down:
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z + 0.5f);
+            faceMesh.texcoords[0].first = 1.0f; faceMesh.texcoords[0].second = 1.0f;
+            faceMesh.vertices[0][0] = location.x - 0.5f;
+            faceMesh.vertices[0][1] = location.y - 0.5f;
+            faceMesh.vertices[0][2] = location.z - 0.5f;
+
+            faceMesh.texcoords[1].first = 0.0f; faceMesh.texcoords[1].second = 1.0f;
+            faceMesh.vertices[1][0] = location.x + 0.5f;
+            faceMesh.vertices[1][1] = location.y - 0.5f;
+            faceMesh.vertices[1][2] = location.z - 0.5f;
+
+            faceMesh.texcoords[2].first = 0.0f; faceMesh.texcoords[2].second = 0.0f;
+            faceMesh.vertices[2][0] = location.x + 0.5f;
+            faceMesh.vertices[2][1] = location.y - 0.5f;
+            faceMesh.vertices[2][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[3].first = 1.0f; faceMesh.texcoords[3].second = 0.0f;
+            faceMesh.vertices[3][0] = location.x - 0.5f;
+            faceMesh.vertices[3][1] = location.y - 0.5f;
+            faceMesh.vertices[3][2] = location.z + 0.5f;
             break;
         case Left:
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z + 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z - 0.5f);
+            faceMesh.texcoords[0].first = 1.0f; faceMesh.texcoords[0].second = 1.0f;
+            faceMesh.vertices[0][0] = location.x - 0.5f;
+            faceMesh.vertices[0][1] = location.y - 0.5f;
+            faceMesh.vertices[0][2] = location.z - 0.5f;
+
+            faceMesh.texcoords[1].first = 0.0f; faceMesh.texcoords[1].second = 1.0f;
+            faceMesh.vertices[1][0] = location.x - 0.5f;
+            faceMesh.vertices[1][1] = location.y - 0.5f;
+            faceMesh.vertices[1][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[2].first = 0.0f; faceMesh.texcoords[2].second = 0.0f;
+            faceMesh.vertices[2][0] = location.x - 0.5f;
+            faceMesh.vertices[2][1] = location.y + 0.5f;
+            faceMesh.vertices[2][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[3].first = 1.0f; faceMesh.texcoords[3].second = 0.0f;
+            faceMesh.vertices[3][0] = location.x - 0.5f;
+            faceMesh.vertices[3][1] = location.y + 0.5f;
+            faceMesh.vertices[3][2] = location.z - 0.5f;
             break;
         case Right:
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z - 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z + 0.5f);
-            break;
+            faceMesh.texcoords[0].first = 0.0f; faceMesh.texcoords[0].second = 1.0f;
+            faceMesh.vertices[0][0] = location.x + 0.5f;
+            faceMesh.vertices[0][1] = location.y - 0.5f;
+            faceMesh.vertices[0][2] = location.z - 0.5f;
 
+            faceMesh.texcoords[1].first = 0.0f; faceMesh.texcoords[1].second = 0.0f;
+            faceMesh.vertices[1][0] = location.x + 0.5f;
+            faceMesh.vertices[1][1] = location.y + 0.5f;
+            faceMesh.vertices[1][2] = location.z - 0.5f;
+
+            faceMesh.texcoords[2].first = 1.0f; faceMesh.texcoords[2].second = 0.0f;
+            faceMesh.vertices[2][0] = location.x + 0.5f;
+            faceMesh.vertices[2][1] = location.y + 0.5f;
+            faceMesh.vertices[2][2] = location.z + 0.5f;
+
+            faceMesh.texcoords[3].first = 1.0f; faceMesh.texcoords[3].second = 1.0f;
+            faceMesh.vertices[3][0] = location.x + 0.5f;
+            faceMesh.vertices[3][1] = location.y - 0.5f;
+            faceMesh.vertices[3][2] = location.z + 0.5f;
+            break;
     }
+
+    faceMeshes.push_back(faceMesh);
+}
+
+void MeshData::RenderFaceQuad(FaceMesh faceMesh) {
+    rlCheckRenderBatchLimit(6);
+
+    rlSetTexture(faceMesh.texture.id);
+
+    rlBegin(RL_QUADS);
+
+    for (int i = 0; i < 4; ++i) {
+        rlTexCoord2f(faceMesh.texcoords[i].first, faceMesh.texcoords[i].second);
+        rlVertex3f(faceMesh.vertices[i][0], faceMesh.vertices[i][1], faceMesh.vertices[i][2]);
+    }
+
     rlEnd();
     rlSetTexture(0);
 }

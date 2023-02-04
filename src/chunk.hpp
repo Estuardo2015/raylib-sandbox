@@ -33,7 +33,9 @@ public:
 
     int Vector3ToIndex(Vector3 p);
 
-    void Render(int, int);
+    void Update(int, int);
+
+    void Render();
 };
 
 Chunk::Chunk() {
@@ -85,7 +87,9 @@ int Chunk::Vector3ToIndex(Vector3 p) {
     return (p.z * CHUNK_WIDTH * CHUNK_HEIGHT) + (p.y * CHUNK_WIDTH) + p.x;
 }
 
-void Chunk::Render(int worldX, int worldZ) {
+void Chunk::Update(int worldX, int worldZ) {
+    meshData.faceMeshes.clear();
+
     for (int i = 0; i < blocksLength; i++) {
         Vector3 position = IndexToVector3(i);
         position.x = (CHUNK_WIDTH * worldX) + position.x;
@@ -97,8 +101,14 @@ void Chunk::Render(int worldX, int worldZ) {
             Vector3 neighbourBlockCoordinates = Vector3Add(position, GetDirectionVector(direction));
             Block neighborBlock = GetBlock(neighbourBlockCoordinates);
 
-            meshData.GetMeshData(direction, position, blocks[i].type, neighborBlock.type);
+            meshData.GenerateMeshData(direction, position, blocks[i].type, neighborBlock.type);
         }
+    }
+}
+
+void Chunk::Render() {
+    for (int i = 0; i < meshData.faceMeshes.size(); ++i) {
+        meshData.RenderFaceQuad(meshData.faceMeshes[i]);
     }
 }
 
