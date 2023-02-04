@@ -20,10 +20,10 @@ enum BlockType {
     Stone
 };
 
-std::unordered_map<std::string, BlockType> BlockDict {
+std::unordered_map<std::string, BlockType> BlockDict{
         {"grass", Grass},
         {"water", Water},
-        {"dirt", Dirt},
+        {"dirt",  Dirt},
         {"stone", Stone}
 };
 
@@ -45,12 +45,12 @@ BlockDataManager::BlockDataManager() {
     json blockData = LoadBlockJSON("../data/block_data.json");
 
     // Iterate through block types
-    for (auto& blockToDirections : blockData.items()) {
+    for (auto &blockToDirections: blockData.items()) {
         std::string blockTypeStr = blockToDirections.key();
         BlockType blockType = BlockDict[blockTypeStr];
 
         // Iterate through directions
-        for (auto& blockDirection : blockToDirections.value().items()) {
+        for (auto &blockDirection: blockToDirections.value().items()) {
             // Get the coordinates of the texture in the atlas
             std::string dir = blockDirection.key();
             float x = blockDirection.value()["x"];
@@ -80,7 +80,7 @@ BlockDataManager::BlockDataManager() {
     UnloadImage(atlas);
 }
 
-json BlockDataManager::LoadBlockJSON(const char * blockJSONPath) {
+json BlockDataManager::LoadBlockJSON(const char *blockJSONPath) {
     std::ifstream file(blockJSONPath);
     return json::parse(file);
 }

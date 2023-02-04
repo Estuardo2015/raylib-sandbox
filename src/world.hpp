@@ -32,6 +32,7 @@ World::World() {
 }
 
 void World::GenerateWorld() {
+
     for (int x = 0; x < WORLD_WIDTH; x++) {
         for (int y = 0; y < WORLD_WIDTH; y++) {
             Chunk chunk = Chunk({float(x), float(y)});
