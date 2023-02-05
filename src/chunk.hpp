@@ -16,6 +16,7 @@ public:
     int blocksLength = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
     Vector2 worldPosition;
     MeshData meshData;
+    bool modified = true;
 
     Chunk();
 
@@ -88,21 +89,25 @@ int Chunk::Vector3ToIndex(Vector3 p) {
 }
 
 void Chunk::Update(int worldX, int worldZ) {
-    meshData.faceMeshes.clear();
+    if (modified) {
+        meshData.faceMeshes.clear();
 
-    for (int i = 0; i < blocksLength; i++) {
-        Vector3 position = IndexToVector3(i);
-        position.x = (CHUNK_WIDTH * worldX) + position.x;
-        position.z = (CHUNK_WIDTH * worldZ) + position.z;
+        for (int i = 0; i < blocksLength; i++) {
+            Vector3 position = IndexToVector3(i);
+            position.x = (CHUNK_WIDTH * worldX) + position.x;
+            position.z = (CHUNK_WIDTH * worldZ) + position.z;
 
-        // Get neighbor blocks
-        std::unordered_map<Direction, BlockType> neighbors;
-        for (Direction direction: directions) {
-            Vector3 neighbourBlockCoordinates = Vector3Add(position, GetDirectionVector(direction));
-            Block neighborBlock = GetBlock(neighbourBlockCoordinates);
+            // Get neighbor blocks
+            std::unordered_map<Direction, BlockType> neighbors;
+            for (Direction direction: directions) {
+                Vector3 neighbourBlockCoordinates = Vector3Add(position, GetDirectionVector(direction));
+                Block neighborBlock = GetBlock(neighbourBlockCoordinates);
 
-            meshData.GenerateMeshData(direction, position, blocks[i].type, neighborBlock.type);
+                meshData.GenerateMeshData(direction, position, blocks[i].type, neighborBlock.type);
+            }
         }
+
+        modified = false;
     }
 }
 
