@@ -22,6 +22,8 @@ public:
 
     void GenerateBlocks(Chunk *chunk);
 
+    void GenerateTestBlocks(Chunk *chunk);
+
     void Update();
 
     void Render();
@@ -32,11 +34,10 @@ World::World() {
 }
 
 void World::GenerateWorld() {
-
     for (int x = 0; x < WORLD_WIDTH; x++) {
         for (int y = 0; y < WORLD_WIDTH; y++) {
             Chunk chunk = Chunk({float(x), float(y)});
-            GenerateBlocks(&chunk);
+            GenerateTestBlocks(&chunk);
             chunkMap[x][y] = chunk;
         }
     }
@@ -67,6 +68,12 @@ void World::GenerateBlocks(Chunk *chunk) {
                 chunk->SetBlock({x, y, z}, Block(blockType));
             }
         }
+    }
+}
+
+void World::GenerateTestBlocks(Chunk *chunk) {
+    for (float i = 0; i < 10; ++i) {
+        chunk->SetBlock({0, 0, i}, Block(Dirt));
     }
 }
 

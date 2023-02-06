@@ -15,7 +15,7 @@ public:
     Block blocks[CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT];
     int blocksLength = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
     Vector2 worldPosition;
-    MeshData meshData;
+    ChunkMesh chunkMesh;
     bool modified = true;
 
     Chunk();
@@ -90,8 +90,6 @@ int Chunk::Vector3ToIndex(Vector3 p) {
 
 void Chunk::Update(int worldX, int worldZ) {
     if (modified) {
-        meshData.faceMeshes.clear();
-
         for (int i = 0; i < blocksLength; i++) {
             Vector3 position = IndexToVector3(i);
             position.x = (CHUNK_WIDTH * worldX) + position.x;
@@ -103,7 +101,7 @@ void Chunk::Update(int worldX, int worldZ) {
                 Vector3 neighbourBlockCoordinates = Vector3Add(position, GetDirectionVector(direction));
                 Block neighborBlock = GetBlock(neighbourBlockCoordinates);
 
-                meshData.GenerateMeshData(direction, position, blocks[i].type, neighborBlock.type);
+                chunkMesh.GenerateBlockMesh(direction, position, blocks[i].type, neighborBlock.type);
             }
         }
 
@@ -112,9 +110,7 @@ void Chunk::Update(int worldX, int worldZ) {
 }
 
 void Chunk::Render() {
-    for (int i = 0; i < meshData.faceMeshes.size(); ++i) {
-        meshData.RenderFaceQuad(meshData.faceMeshes[i]);
-    }
+    chunkMesh.RenderChunkMesh();
 }
 
 #endif

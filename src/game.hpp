@@ -36,21 +36,7 @@ void Game::Update() {
 }
 
 void Game::Draw() {
-    BeginDrawing();
 
-    ClearBackground(RAYWHITE);
-
-    BeginMode3D(player.camera);
-
-    DrawGrid(50, 1.0f);
-
-    world.Render();
-
-    EndMode3D();
-
-    DrawFPS(10, 10);
-
-    EndDrawing();
 }
 
 #endif
