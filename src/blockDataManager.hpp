@@ -10,8 +10,6 @@
 
 using json = nlohmann::json;
 
-const int BLOCK_TEXTURE_SIZE = 16;
-
 enum BlockType {
     Air,
     Water,
@@ -20,17 +18,19 @@ enum BlockType {
     Stone
 };
 
-std::unordered_map<std::string, BlockType> BlockDict {
+std::unordered_map<std::string, BlockType> BlockDict{
         {"grass", Grass},
         {"water", Water},
-        {"dirt", Dirt},
+        {"dirt",  Dirt},
         {"stone", Stone}
 };
 
 class BlockDataManager {
 
 public:
-    std::unordered_map<BlockType, std::unordered_map<Direction, Texture2D>> BlockTextureDictionary;
+    Material atlas;
+
+    std::unordered_map<BlockType, std::unordered_map<Direction, std::vector<float>>> BlockFaceToUVs;
 
     BlockDataManager();
 
@@ -38,49 +38,49 @@ public:
 };
 
 BlockDataManager::BlockDataManager() {
-    // Load the atlas atlas
-    Image atlas = LoadImage("../res/atlas.png");
+    // Load the image atlas
+    Texture atlasTexture = LoadTexture("../res/atlas.png");
+    atlas = LoadMaterialDefault();
+    SetMaterialTexture(&atlas, MATERIAL_MAP_DIFFUSE, atlasTexture);
+
+    std::cout << "atlas loaded" << std::endl;
 
     // Load block data
     json blockData = LoadBlockJSON("../data/block_data.json");
 
     // Iterate through block types
-    for (auto& blockToDirections : blockData.items()) {
+    for (auto &blockToDirections: blockData.items()) {
         std::string blockTypeStr = blockToDirections.key();
         BlockType blockType = BlockDict[blockTypeStr];
 
         // Iterate through directions
-        for (auto& blockDirection : blockToDirections.value().items()) {
-            // Get the coordinates of the texture in the atlas
+        for (auto &blockDirection: blockToDirections.value().items()) {
+            // Get texture uv's for each face
             std::string dir = blockDirection.key();
-            float x = blockDirection.value()["x"];
-            float y = blockDirection.value()["y"];
+            std::vector<float> uvs;
 
-            // Get subimage using coordinates
-            Rectangle rect = {x * BLOCK_TEXTURE_SIZE, y * BLOCK_TEXTURE_SIZE, BLOCK_TEXTURE_SIZE, BLOCK_TEXTURE_SIZE};
-            Image subImage = ImageFromImage(atlas, rect);
-            Texture subTexture = LoadTextureFromImage(subImage);
+            for (auto &uv: blockDirection.value()) {
+                uvs.push_back(uv);
+            }
 
             // Set atlas to the block direction
             if (dir == "top") {
-                BlockTextureDictionary[blockType][Up] = subTexture;
+                BlockFaceToUVs[blockType][Up] = uvs;
             } else if (dir == "bottom") {
-                BlockTextureDictionary[blockType][Down] = subTexture;
+                BlockFaceToUVs[blockType][Down] = uvs;
             } else if (dir == "side") {
-                BlockTextureDictionary[blockType][Forward] = subTexture;
-                BlockTextureDictionary[blockType][Backward] = subTexture;
-                BlockTextureDictionary[blockType][Left] = subTexture;
-                BlockTextureDictionary[blockType][Right] = subTexture;
+                BlockFaceToUVs[blockType][Forward] = uvs;
+                BlockFaceToUVs[blockType][Backward] = uvs;
+                BlockFaceToUVs[blockType][Left] = uvs;
+                BlockFaceToUVs[blockType][Right] = uvs;
             }
-
-            UnloadImage(subImage);
         }
     }
 
-    UnloadImage(atlas);
+    std::cout << "precalculated uv's loaded" << std::endl;
 }
 
-json BlockDataManager::LoadBlockJSON(const char * blockJSONPath) {
+json BlockDataManager::LoadBlockJSON(const char *blockJSONPath) {
     std::ifstream file(blockJSONPath);
     return json::parse(file);
 }

@@ -7,25 +7,23 @@
 #include "block.hpp"
 #include "rlgl.h"
 
-class MeshData {
+class ChunkMesh {
 public:
-    Model model = { 0 };
-    std::vector<Mesh> meshes;
-    std::vector<Material> materials;
-    std::vector<int> meshMaterials;
+    Mesh mesh;
+    std::vector<float> vertices;
+    std::vector<unsigned short> indices;
+    std::vector<float> texcoords;
 
-    MeshData();
+    void GenerateBlockMesh(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock);
 
-    void AddFaceQuad(Direction direction, Vector3 location, BlockType blockType);
+    void AddBlockFace(Direction direction, Vector3 location, BlockType blockType);
 
-    void GetMeshData(Direction, Vector3, BlockType, BlockType);
+    void RefreshMesh();
+
+    void RenderChunkMesh();
 };
 
-MeshData::MeshData() {
-    model.transform = MatrixIdentity();
-}
-
-void MeshData::GetMeshData(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock) {
+void ChunkMesh::GenerateBlockMesh(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock) {
     if (blockType == Air) {
         return;
     }
@@ -35,60 +33,154 @@ void MeshData::GetMeshData(Direction direction, Vector3 location, BlockType bloc
 //            // TODO: Handle water
 //        }
 
-        AddFaceQuad(direction, location, blockType);
+        AddBlockFace(direction, location, blockType);
     }
 }
 
-void MeshData::AddFaceQuad(Direction direction, Vector3 location, BlockType blockType) {
-    Texture texture = blockDataManager->BlockTextureDictionary[blockType][direction];
-
-    rlCheckRenderBatchLimit(6);
-
-    rlSetTexture(texture.id);
-
-    rlBegin(RL_QUADS);
+void ChunkMesh::AddBlockFace(Direction direction, Vector3 location, BlockType blockType) {
+    for (int i = 0; i < 8; ++i) {
+        texcoords.push_back(blockDataManager->BlockFaceToUVs[blockType][direction][i]);
+    }
 
     switch (direction) {
         case Forward:
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z + 0.5f);
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z + 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z + 0.5f);
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
             break;
         case Backward:
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z - 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z - 0.5f);
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z - 0.5f);
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
             break;
         case Up:
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z - 0.5f);
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
             break;
         case Down:
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z + 0.5f);
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
             break;
         case Left:
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x - 0.5f, location.y - 0.5f, location.z + 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x - 0.5f, location.y + 0.5f, location.z - 0.5f);
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
             break;
         case Right:
-            rlTexCoord2f(0.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z - 0.5f);
-            rlTexCoord2f(0.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z - 0.5f);
-            rlTexCoord2f(1.0f, 0.0f); rlVertex3f(location.x + 0.5f, location.y + 0.5f, location.z + 0.5f);
-            rlTexCoord2f(1.0f, 1.0f); rlVertex3f(location.x + 0.5f, location.y - 0.5f, location.z + 0.5f);
-            break;
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
 
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            break;
     }
-    rlEnd();
-    rlSetTexture(0);
+
+    int numVertices = vertices.size();
+    indices.push_back((numVertices / 3) - 4);
+    indices.push_back((numVertices / 3) - 3);
+    indices.push_back((numVertices / 3) - 2);
+
+    indices.push_back((numVertices / 3) - 2);
+    indices.push_back((numVertices / 3) - 1);
+    indices.push_back((numVertices / 3) - 4);
+}
+
+void ChunkMesh::RefreshMesh() {
+    mesh.vertices = &vertices[0];
+    mesh.vertexCount = vertices.size() / 3;
+
+    mesh.indices = &indices[0];
+    mesh.triangleCount = indices.size() / 3;
+
+    mesh.texcoords = &texcoords[0];
+
+    std::cout << "uploading mesh to gpu" << std::endl;
+    std::cout << "> vertices size: " << vertices.size() << std::endl;
+    std::cout << "> indices size: " << indices.size() << std::endl;
+
+    UploadMesh(&mesh, false);
+}
+
+void ChunkMesh::RenderChunkMesh() {
+    DrawMesh(mesh, blockDataManager->atlas, MatrixIdentity());
 }
 
 #endif

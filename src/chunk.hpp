@@ -8,14 +8,15 @@
 #include "meshData.hpp"
 
 const int CHUNK_WIDTH = 16; // 16 In blocks
-const int CHUNK_HEIGHT = 100; // 100
+const int CHUNK_HEIGHT = 32; // 100
 
 class Chunk {
 public:
     Block blocks[CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT];
     int blocksLength = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
     Vector2 worldPosition;
-    MeshData meshData;
+    ChunkMesh chunkMesh;
+    bool modified = true;
 
     Chunk();
 
@@ -33,15 +34,18 @@ public:
 
     int Vector3ToIndex(Vector3 p);
 
+    void Update(int, int);
+
     void Render();
 };
 
 Chunk::Chunk() {
-
+    chunkMesh.mesh = { 0 };
 }
 
 Chunk::Chunk(Vector2 wp) {
     worldPosition = wp;
+    chunkMesh.mesh = { 0 };
 }
 
 void Chunk::SetBlock(Vector3 localPosition, Block block) {
@@ -85,19 +89,31 @@ int Chunk::Vector3ToIndex(Vector3 p) {
     return (p.z * CHUNK_WIDTH * CHUNK_HEIGHT) + (p.y * CHUNK_WIDTH) + p.x;
 }
 
-void Chunk::Render() {
-    for (int i = 0; i < blocksLength; i++) {
-        Vector3 position = IndexToVector3(i);
+void Chunk::Update(int worldX, int worldZ) {
+    if (modified) {
+        for (int i = 0; i < blocksLength; i++) {
+            Vector3 position = IndexToVector3(i);
+            position.x = (CHUNK_WIDTH * worldX) + position.x;
+            position.z = (CHUNK_WIDTH * worldZ) + position.z;
 
-        // Get neighbor blocks
-        std::unordered_map<Direction, BlockType> neighbors;
-        for (Direction direction: directions) {
-            Vector3 neighbourBlockCoordinates = Vector3Add(position, GetDirectionVector(direction));
-            Block neighborBlock = GetBlock(neighbourBlockCoordinates);
+            // Get neighbor blocks
+            std::unordered_map<Direction, BlockType> neighbors;
+            for (Direction direction: directions) {
+                Vector3 neighbourBlockCoordinates = Vector3Add(position, GetDirectionVector(direction));
+                Block neighborBlock = GetBlock(neighbourBlockCoordinates);
 
-            meshData.GetMeshData(direction, position, blocks[i].type, neighborBlock.type);
+                chunkMesh.GenerateBlockMesh(direction, position, blocks[i].type, neighborBlock.type);
+            }
         }
+
+        chunkMesh.RefreshMesh();
+
+        modified = false;
     }
+}
+
+void Chunk::Render() {
+    chunkMesh.RenderChunkMesh();
 }
 
 #endif
