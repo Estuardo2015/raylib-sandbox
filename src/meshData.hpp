@@ -9,6 +9,7 @@
 
 class ChunkMesh {
 public:
+    Mesh mesh;
     std::vector<float> vertices;
     std::vector<unsigned short> indices;
     std::vector<float> texcoords;
@@ -16,6 +17,8 @@ public:
     void GenerateBlockMesh(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock);
 
     void AddBlockFace(Direction direction, Vector3 location, BlockType blockType);
+
+    void RefreshMesh();
 
     void RenderChunkMesh();
 };
@@ -35,162 +38,149 @@ void ChunkMesh::GenerateBlockMesh(Direction direction, Vector3 location, BlockTy
 }
 
 void ChunkMesh::AddBlockFace(Direction direction, Vector3 location, BlockType blockType) {
-    float *uvs = blockDataManager->BlockFaceToUVs[blockType][direction];
     for (int i = 0; i < 8; ++i) {
-        texcoords.push_back(uvs[i]);
+        texcoords.push_back(blockDataManager->BlockFaceToUVs[blockType][direction][i]);
     }
 
     switch (direction) {
         case Forward:
-            // Bottom left
-            vertices.push_back(location.x + 0.5f);
-            vertices.push_back(location.y + 0.5f);
-            vertices.push_back(location.z - 0.5f);
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
 
-            // Top left
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
             vertices.push_back(location.x + 0.5f);
             vertices.push_back(location.y + 0.5f);
             vertices.push_back(location.z + 0.5f);
 
-            // Top Right
             vertices.push_back(location.x - 0.5f);
             vertices.push_back(location.y + 0.5f);
             vertices.push_back(location.z + 0.5f);
 
-            // Bottom right
-            vertices.push_back(location.x - 0.5f);
-            vertices.push_back(location.y + 0.5f);
-            vertices.push_back(location.z - 0.5f);
             break;
         case Backward:
-            // Bottom left
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
             vertices.push_back(location.x - 0.5f);
             vertices.push_back(location.y - 0.5f);
             vertices.push_back(location.z - 0.5f);
 
-            // Top left
             vertices.push_back(location.x - 0.5f);
-            vertices.push_back(location.y - 0.5f);
-            vertices.push_back(location.z + 0.5f);
-
-            // Top right
-            vertices.push_back(location.x + 0.5f);
-            vertices.push_back(location.y - 0.5f);
-            vertices.push_back(location.z + 0.5f);
-
-            // Bottom right
-            vertices.push_back(location.x + 0.5f);
-            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.y + 0.5f);
             vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
             break;
         case Up:
-            // Bottom left
-            vertices.push_back(location.x - 0.5f);
-            vertices.push_back(location.y - 0.5f);
-            vertices.push_back(location.z + 0.5f);
-
-            // Top left
             vertices.push_back(location.x - 0.5f);
             vertices.push_back(location.y + 0.5f);
             vertices.push_back(location.z + 0.5f);
 
-            // Top right
             vertices.push_back(location.x + 0.5f);
             vertices.push_back(location.y + 0.5f);
             vertices.push_back(location.z + 0.5f);
 
-            // Bottom right
             vertices.push_back(location.x + 0.5f);
-            vertices.push_back(location.y - 0.5f);
-            vertices.push_back(location.z + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
             break;
         case Down:
-            // Bottom left
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
             vertices.push_back(location.x + 0.5f);
             vertices.push_back(location.y - 0.5f);
             vertices.push_back(location.z - 0.5f);
 
-            // Top left
             vertices.push_back(location.x + 0.5f);
-            vertices.push_back(location.y + 0.5f);
-            vertices.push_back(location.z - 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z + 0.5f);
 
-            // Top right
-            vertices.push_back(location.x - 0.5f);
-            vertices.push_back(location.y + 0.5f);
-            vertices.push_back(location.z - 0.5f);
-
-            // Bottom right
             vertices.push_back(location.x - 0.5f);
             vertices.push_back(location.y - 0.5f);
-            vertices.push_back(location.z - 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
             break;
         case Left:
-            // Bottom left
             vertices.push_back(location.x - 0.5f);
-            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.y - 0.5f);
             vertices.push_back(location.z - 0.5f);
 
-            // Top left
-            vertices.push_back(location.x - 0.5f);
-            vertices.push_back(location.y + 0.5f);
-            vertices.push_back(location.z + 0.5f);
-
-            // Top right
             vertices.push_back(location.x - 0.5f);
             vertices.push_back(location.y - 0.5f);
             vertices.push_back(location.z + 0.5f);
 
-            // Bottom right
             vertices.push_back(location.x - 0.5f);
-            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z + 0.5f);
+
+            vertices.push_back(location.x - 0.5f);
+            vertices.push_back(location.y + 0.5f);
             vertices.push_back(location.z - 0.5f);
+
             break;
         case Right:
-            // Bottom left
-            vertices.push_back(location.x + 0.5f);
-            vertices.push_back(location.y - 0.5f);
-            vertices.push_back(location.z - 0.5f);
-
-            // Top left
             vertices.push_back(location.x + 0.5f);
             vertices.push_back(location.y - 0.5f);
             vertices.push_back(location.z + 0.5f);
 
-            // Top right
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y - 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
+            vertices.push_back(location.x + 0.5f);
+            vertices.push_back(location.y + 0.5f);
+            vertices.push_back(location.z - 0.5f);
+
             vertices.push_back(location.x + 0.5f);
             vertices.push_back(location.y + 0.5f);
             vertices.push_back(location.z + 0.5f);
 
-            // Bottom right
-            vertices.push_back(location.x + 0.5f);
-            vertices.push_back(location.y + 0.5f);
-            vertices.push_back(location.z - 0.5f);
             break;
     }
 
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
+    int numVertices = vertices.size();
+    indices.push_back((numVertices / 3) - 4);
+    indices.push_back((numVertices / 3) - 3);
+    indices.push_back((numVertices / 3) - 2);
 
-    indices.push_back(2);
-    indices.push_back(3);
-    indices.push_back(0);
+    indices.push_back((numVertices / 3) - 2);
+    indices.push_back((numVertices / 3) - 1);
+    indices.push_back((numVertices / 3) - 4);
+}
+
+void ChunkMesh::RefreshMesh() {
+    mesh.vertices = &vertices[0];
+    mesh.vertexCount = vertices.size() / 3;
+
+    mesh.indices = &indices[0];
+    mesh.triangleCount = indices.size() / 3;
+
+    mesh.texcoords = &texcoords[0];
+
+    std::cout << "uploading mesh to gpu" << std::endl;
+    std::cout << "> vertices size: " << vertices.size() << std::endl;
+    std::cout << "> indices size: " << indices.size() << std::endl;
+
+    UploadMesh(&mesh, false);
 }
 
 void ChunkMesh::RenderChunkMesh() {
-    Mesh m = { 0 };
-    m.vertices = &vertices[0];
-    m.vertexCount = vertices.size();
-
-    m.indices = &indices[0];
-    m.triangleCount = indices.size() / 3;
-
-    m.texcoords = &texcoords[0];
-
-    UploadMesh(&m, false);
-
-    DrawMesh(m, blockDataManager->atlas, MatrixIdentity());
+    DrawMesh(mesh, blockDataManager->atlas, MatrixIdentity());
 }
 
 #endif

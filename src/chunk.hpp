@@ -8,7 +8,7 @@
 #include "meshData.hpp"
 
 const int CHUNK_WIDTH = 16; // 16 In blocks
-const int CHUNK_HEIGHT = 100; // 100
+const int CHUNK_HEIGHT = 32; // 100
 
 class Chunk {
 public:
@@ -40,11 +40,12 @@ public:
 };
 
 Chunk::Chunk() {
-
+    chunkMesh.mesh = { 0 };
 }
 
 Chunk::Chunk(Vector2 wp) {
     worldPosition = wp;
+    chunkMesh.mesh = { 0 };
 }
 
 void Chunk::SetBlock(Vector3 localPosition, Block block) {
@@ -104,6 +105,8 @@ void Chunk::Update(int worldX, int worldZ) {
                 chunkMesh.GenerateBlockMesh(direction, position, blocks[i].type, neighborBlock.type);
             }
         }
+
+        chunkMesh.RefreshMesh();
 
         modified = false;
     }

@@ -30,7 +30,7 @@ class BlockDataManager {
 public:
     Material atlas;
 
-    std::unordered_map<BlockType, std::unordered_map<Direction, float*>> BlockFaceToUVs;
+    std::unordered_map<BlockType, std::unordered_map<Direction, std::vector<float>>> BlockFaceToUVs;
 
     BlockDataManager();
 
@@ -57,18 +57,22 @@ BlockDataManager::BlockDataManager() {
         for (auto &blockDirection: blockToDirections.value().items()) {
             // Get texture uv's for each face
             std::string dir = blockDirection.key();
-            std::vector<float> uvs = blockDirection.value();
+            std::vector<float> uvs;
+
+            for (auto &uv: blockDirection.value()) {
+                uvs.push_back(uv);
+            }
 
             // Set atlas to the block direction
             if (dir == "top") {
-                BlockFaceToUVs[blockType][Up] = &uvs[0];
+                BlockFaceToUVs[blockType][Up] = uvs;
             } else if (dir == "bottom") {
-                BlockFaceToUVs[blockType][Down] = &uvs[0];
+                BlockFaceToUVs[blockType][Down] = uvs;
             } else if (dir == "side") {
-                BlockFaceToUVs[blockType][Forward] = &uvs[0];
-                BlockFaceToUVs[blockType][Backward] = &uvs[0];
-                BlockFaceToUVs[blockType][Left] = &uvs[0];
-                BlockFaceToUVs[blockType][Right] = &uvs[0];
+                BlockFaceToUVs[blockType][Forward] = uvs;
+                BlockFaceToUVs[blockType][Backward] = uvs;
+                BlockFaceToUVs[blockType][Left] = uvs;
+                BlockFaceToUVs[blockType][Right] = uvs;
             }
         }
     }
