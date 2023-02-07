@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <string>
 #include "blockDataManager.hpp"
+#include "threadPool.hpp"
 
 const int WORLD_WIDTH = 16; // In chunks
 
@@ -19,10 +20,6 @@ public:
     World();
 
     void GenerateWorld();
-
-    void GenerateTerrain(siv::PerlinNoise, Chunk *chunk);
-
-    void GenerateTestBlocks(Chunk *chunk);
 
     void Update();
 
@@ -43,44 +40,21 @@ void World::GenerateWorld() {
         chunkMap.emplace_back();
         for (int y = 0; y < WORLD_WIDTH; y++) {
             Chunk chunk = Chunk({float(x), float(y)});
-            GenerateTerrain(perlin, &chunk);
             chunkMap[x].push_back(chunk);
         }
     }
-}
 
-void World::GenerateTerrain(siv::PerlinNoise perlin, Chunk *chunk) {
-    for (float x = 0; x < CHUNK_WIDTH; x++) {
-        for (float z = 0; z < CHUNK_WIDTH; z++) {
-            for (float y = 0; y < CHUNK_HEIGHT; y++) {
-                double noiseValue = perlin.noise3D(((CHUNK_WIDTH * chunk->worldPosition.x) + x) * noiseScale, (0 + y) * noiseScale, ((CHUNK_WIDTH * chunk->worldPosition.y) + z) * noiseScale);
-                //float noiseValue = Mathf.PerlinNoise((chunk.worldPosition.x + x) * noiseScale, (chunk.worldPosition.z + z) * noiseScale);
-                int groundPosition = std::round(noiseValue * CHUNK_HEIGHT);
-
-                BlockType blockType = Dirt;
-                if (y > groundPosition) {
-                    if (y < waterThreshold) {
-                        blockType = Water;
-                    } else {
-                        blockType = Air;
-                    }
-                } else if (y == groundPosition) {
-                    blockType = Grass;
-                }
-
-                chunk->SetBlock({x, y, z}, Block(blockType));
-            }
+    ThreadPool worldGenerationThreadPool = ThreadPool(8);
+    for (int x = 0; x < WORLD_WIDTH; x++) {
+        for (int y = 0; y < WORLD_WIDTH; y++) {
+            worldGenerationThreadPool.QueueJob([this, x, y, perlin] {
+                chunkMap[x][y].GenerateTerrain(perlin, noiseScale, waterThreshold);
+            });
         }
     }
-}
 
-void World::GenerateTestBlocks(Chunk *chunk) {
-    for (float x = 0; x < CHUNK_WIDTH; ++x) {
-        for (float z = 0; z < CHUNK_WIDTH; ++z) {
-            chunk->SetBlock({x, 0, z}, Block(Grass));
-
-        }
-    }
+    worldGenerationThreadPool.WaitUntilFinished();
+    worldGenerationThreadPool.Stop();
 }
 
 void World::Update() {

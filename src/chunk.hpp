@@ -6,6 +6,7 @@
 #include <functional>
 #include "raylib.h"
 #include "meshData.hpp"
+#include "PerlinNoise.hpp"
 
 const int CHUNK_WIDTH = 32; // 16 In blocks
 const int CHUNK_HEIGHT = 50; // 100
@@ -21,6 +22,8 @@ public:
     Chunk();
 
     Chunk(Vector2);
+
+    void GenerateTerrain(siv::PerlinNoise perlin, float noiseScale, int waterThreshold);
 
     void SetBlock(Vector3 localPosition, Block block);
 
@@ -46,6 +49,31 @@ Chunk::Chunk() {
 Chunk::Chunk(Vector2 wp) {
     worldPosition = wp;
     chunkMesh.mesh = { 0 };
+}
+
+void Chunk::GenerateTerrain(siv::PerlinNoise perlin, float noiseScale, int waterThreshold) {
+    for (float x = 0; x < CHUNK_WIDTH; x++) {
+        for (float z = 0; z < CHUNK_WIDTH; z++) {
+            for (float y = 0; y < CHUNK_HEIGHT; y++) {
+                double noiseValue = perlin.noise3D(((CHUNK_WIDTH * worldPosition.x) + x) * noiseScale, (0 + y) * noiseScale, ((CHUNK_WIDTH * worldPosition.y) + z) * noiseScale);
+                //float noiseValue = Mathf.PerlinNoise((chunk.worldPosition.x + x) * noiseScale, (chunk.worldPosition.z + z) * noiseScale);
+                int groundPosition = std::round(noiseValue * CHUNK_HEIGHT);
+
+                BlockType blockType = Dirt;
+                if (y > groundPosition) {
+                    if (y < waterThreshold) {
+                        blockType = Water;
+                    } else {
+                        blockType = Air;
+                    }
+                } else if (y == groundPosition) {
+                    blockType = Grass;
+                }
+
+                SetBlock({x, y, z}, Block(blockType));
+            }
+        }
+    }
 }
 
 void Chunk::SetBlock(Vector3 localPosition, Block block) {
