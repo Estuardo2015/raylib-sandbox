@@ -13,7 +13,7 @@ const int WORLD_WIDTH = 8; // In chunks
 class World {
 public:
     float noiseScale = 0.03;
-    int waterThreshold = 50;
+    int waterThreshold = 1;
     std::vector<std::vector<Chunk>> chunkMap;
 
     World();
@@ -62,7 +62,6 @@ void World::GenerateTerrain(siv::PerlinNoise perlin, Chunk *chunk) {
                     } else {
                         blockType = Air;
                     }
-                    blockType = Air;
                 } else if (y == groundPosition) {
                     blockType = Grass;
                 }

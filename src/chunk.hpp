@@ -93,8 +93,11 @@ void Chunk::Update(int worldX, int worldZ) {
     if (modified) {
         for (int i = 0; i < blocksLength; i++) {
             Vector3 position = IndexToVector3(i);
-            position.x = (CHUNK_WIDTH * worldX) + position.x;
-            position.z = (CHUNK_WIDTH * worldZ) + position.z;
+            Vector3 worldPos;
+
+            worldPos.x = (CHUNK_WIDTH * worldX) + position.x;
+            worldPos.z = (CHUNK_WIDTH * worldZ) + position.z;
+            worldPos.y = position.y;
 
             // Get neighbor blocks
             std::unordered_map<Direction, BlockType> neighbors;
@@ -102,7 +105,7 @@ void Chunk::Update(int worldX, int worldZ) {
                 Vector3 neighbourBlockCoordinates = Vector3Add(position, GetDirectionVector(direction));
                 Block neighborBlock = GetBlock(neighbourBlockCoordinates);
 
-                chunkMesh.GenerateBlockMesh(direction, position, blocks[i].type, neighborBlock.type);
+                chunkMesh.GenerateBlockMesh(direction, worldPos, blocks[i].type, neighborBlock.type);
             }
         }
 
