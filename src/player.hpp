@@ -28,7 +28,7 @@ public:
 
 Player::Player(CameraMode cm) {
     // Initialize player state
-    position = (Vector3) {4.0f, 0.5f, 4.0f};
+    position = (Vector3) {4.0f, 50.5f, 4.0f};
     direction = (Vector3) {0.0f, 1.0f, 0.0f};
     velocity = (Vector3) {0.0f, 0.0f, 0.0f};
     speed = 0.125f / 20;

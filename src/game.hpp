@@ -32,6 +32,10 @@ Game::Game() {
 void Game::Update() {
     player.Update();
 
+    if (IsKeyPressed(KEY_SPACE)) {
+        world.GenerateWorld();
+    }
+
     world.Update();
 }
 

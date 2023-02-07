@@ -24,15 +24,11 @@ public:
 };
 
 void ChunkMesh::GenerateBlockMesh(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock) {
-    if (blockType == Air) {
+    if ((blockType == Air) || (location.y == 0 && direction == Down)) {
         return;
     }
 
     if (neighborBlock == Air) {
-//        if (blockType == Water) {
-//            // TODO: Handle water
-//        }
-
         AddBlockFace(direction, location, blockType);
     }
 }
