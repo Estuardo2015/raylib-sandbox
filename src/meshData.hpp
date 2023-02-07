@@ -168,10 +168,6 @@ void ChunkMesh::RefreshMesh() {
 
     mesh.texcoords = &texcoords[0];
 
-    std::cout << "uploading mesh to gpu" << std::endl;
-    std::cout << "> vertices size: " << vertices.size() << std::endl;
-    std::cout << "> indices size: " << indices.size() << std::endl;
-
     UploadMesh(&mesh, false);
 }
 
