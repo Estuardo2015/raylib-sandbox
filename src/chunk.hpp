@@ -7,7 +7,7 @@
 #include "raylib.h"
 #include "meshData.hpp"
 
-const int CHUNK_WIDTH = 16; // 16 In blocks
+const int CHUNK_WIDTH = 32; // 16 In blocks
 const int CHUNK_HEIGHT = 50; // 100
 
 class Chunk {

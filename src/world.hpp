@@ -8,7 +8,7 @@
 #include <string>
 #include "blockDataManager.hpp"
 
-const int WORLD_WIDTH = 8; // In chunks
+const int WORLD_WIDTH = 16; // In chunks
 
 class World {
 public:
@@ -34,8 +34,10 @@ World::World() {
 }
 
 void World::GenerateWorld() {
+    chunkMap.clear();
+
     siv::PerlinNoise perlin{ std::random_device{} };
-    perlin.reseed(1);
+    perlin.reseed(time(0));
 
     for (int x = 0; x < WORLD_WIDTH; x++) {
         chunkMap.emplace_back();
