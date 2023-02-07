@@ -26,7 +26,6 @@ Game::Game() {
 
     player = Player(CAMERA_FREE);
     world = World();
-    world.GenerateWorld();
 }
 
 void Game::Update() {

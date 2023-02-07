@@ -27,7 +27,7 @@ public:
 };
 
 World::World() {
-
+    GenerateWorld();
 }
 
 void World::GenerateWorld() {
