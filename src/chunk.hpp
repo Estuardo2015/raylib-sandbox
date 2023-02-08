@@ -23,21 +23,21 @@ public:
 
     Chunk(Vector2);
 
-    void GenerateTerrain(siv::PerlinNoise perlin, float noiseScale, int waterThreshold);
+    void GenerateTerrain(siv::PerlinNoise, float, int);
 
-    void SetBlock(Vector3 localPosition, Block block);
+    void SetBlock(Vector3, Block);
 
     bool InRange(int);
 
     bool InRangeHeight(int);
 
-    Block GetBlock(Vector3 localPosition);
+    Block GetBlock(Vector3, std::vector<std::vector<Chunk>>*, Vector3, int);
 
-    Vector3 IndexToVector3(unsigned int idx);
+    Vector3 IndexToVector3(unsigned int);
 
-    int Vector3ToIndex(Vector3 p);
+    int Vector3ToIndex(Vector3);
 
-    void Update(int, int);
+    void Update(std::vector<std::vector<Chunk>>*, int);
 
     void Render();
 };
@@ -95,15 +95,66 @@ bool Chunk::InRangeHeight(int ycoordinate) {
     return true;
 }
 
-Block Chunk::GetBlock(Vector3 localPosition) {
+void Chunk::Update(std::vector<std::vector<Chunk>>* chunkMapReference, int worldWidth) {
+    if (modified) {
+        for (int i = 0; i < blocksLength; i++) {
+            Vector3 position = IndexToVector3(i);
+            Vector3 worldPos;
+
+            worldPos.x = (CHUNK_WIDTH * worldPosition.x) + position.x;
+            worldPos.z = (CHUNK_WIDTH * worldPosition.y) + position.z;
+            worldPos.y = position.y;
+
+            // Get neighbor blocks
+            for (Direction direction: directions) {
+                Vector3 directionVector = GetDirectionVector(direction);
+                Vector3 neighbourBlockCoordinates = Vector3Add(position, directionVector);
+                Block neighborBlock = GetBlock(neighbourBlockCoordinates, chunkMapReference, directionVector, worldWidth);
+
+                chunkMesh.GenerateBlockMesh(direction, worldPos, blocks[i].type, neighborBlock.type);
+            }
+        }
+
+        chunkMesh.RefreshMesh();
+        modified = false;
+    }
+}
+
+Block Chunk::GetBlock(Vector3 localPosition, std::vector<std::vector<Chunk>>* chunkMapReference, Vector3 directionVector, int worldWidth) {
     if (InRange(localPosition.x) && InRangeHeight(localPosition.y) && InRange(localPosition.z)) {
         int index = Vector3ToIndex(localPosition);
         return blocks[index];
     }
 
-    return Block(Air);
+    int neighborChunkX = worldPosition.x + directionVector.x;
+    int neighborChunkZ = worldPosition.y + directionVector.z;
 
-    //return chunkData.worldReference.GetBlockFromChunkCoordinates(chunkData, chunkData.worldPosition.x + x, chunkData.worldPosition.y + y, chunkData.worldPosition.z
+    // Check if neighbor chunk is outside of world bounds
+    if (neighborChunkX < 0 ||
+        neighborChunkX >= worldWidth ||
+        neighborChunkZ < 0 ||
+        neighborChunkZ >= worldWidth) {
+        return Air;
+    }
+
+    Chunk *chunk = &(*chunkMapReference)[neighborChunkX][neighborChunkZ];
+
+    int index = 0;
+    if (directionVector.x != 0 && directionVector.x > 0) {
+        index = chunk->Vector3ToIndex({0, localPosition.y, localPosition.z});
+    } else if (directionVector.x != 0 && directionVector.x < 0) {
+        index = chunk->Vector3ToIndex({CHUNK_WIDTH-1, localPosition.y, localPosition.z});
+    } else if (directionVector.z != 0 && directionVector.z > 0) {
+        index = chunk->Vector3ToIndex({localPosition.x, localPosition.y, 0});
+    } else if (directionVector.z != 0 && directionVector.z < 0) {
+        index = chunk->Vector3ToIndex({localPosition.x, localPosition.y, CHUNK_WIDTH-1});
+    }
+
+    return chunk->blocks[index];
+}
+
+void Chunk::Render() {
+    chunkMesh.RenderChunkMesh();
 }
 
 Vector3 Chunk::IndexToVector3(unsigned int idx) {
@@ -115,36 +166,6 @@ Vector3 Chunk::IndexToVector3(unsigned int idx) {
 
 int Chunk::Vector3ToIndex(Vector3 p) {
     return (p.z * CHUNK_WIDTH * CHUNK_HEIGHT) + (p.y * CHUNK_WIDTH) + p.x;
-}
-
-void Chunk::Update(int worldX, int worldZ) {
-    if (modified) {
-        for (int i = 0; i < blocksLength; i++) {
-            Vector3 position = IndexToVector3(i);
-            Vector3 worldPos;
-
-            worldPos.x = (CHUNK_WIDTH * worldX) + position.x;
-            worldPos.z = (CHUNK_WIDTH * worldZ) + position.z;
-            worldPos.y = position.y;
-
-            // Get neighbor blocks
-            std::unordered_map<Direction, BlockType> neighbors;
-            for (Direction direction: directions) {
-                Vector3 neighbourBlockCoordinates = Vector3Add(position, GetDirectionVector(direction));
-                Block neighborBlock = GetBlock(neighbourBlockCoordinates);
-
-                chunkMesh.GenerateBlockMesh(direction, worldPos, blocks[i].type, neighborBlock.type);
-            }
-        }
-
-        chunkMesh.RefreshMesh();
-
-        modified = false;
-    }
-}
-
-void Chunk::Render() {
-    chunkMesh.RenderChunkMesh();
 }
 
 #endif

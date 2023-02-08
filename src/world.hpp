@@ -8,12 +8,13 @@
 #include <string>
 #include "blockDataManager.hpp"
 #include "threadPool.hpp"
+#include "chrono"
 
-const int WORLD_WIDTH = 16; // In chunks
+const int WORLD_WIDTH = 20; // In chunks
 
 class World {
 public:
-    float noiseScale = 0.03;
+    float noiseScale = 0.015;
     int waterThreshold = 1;
     std::vector<std::vector<Chunk>> chunkMap;
 
@@ -60,7 +61,7 @@ void World::GenerateWorld() {
 void World::Update() {
     for (int x = 0; x < WORLD_WIDTH; x++) {
         for (int z = 0; z < WORLD_WIDTH; z++) {
-            chunkMap[x][z].Update(x, z);
+            chunkMap[x][z].Update(&chunkMap, WORLD_WIDTH);
         }
     }
 }
@@ -68,8 +69,7 @@ void World::Update() {
 void World::Render() {
     for (int x = 0; x < WORLD_WIDTH; x++) {
         for (int z = 0; z < WORLD_WIDTH; z++) {
-            Chunk chunk = chunkMap[x][z];
-            chunk.Render();
+            chunkMap[x][z].Render();
         }
     }
 }
