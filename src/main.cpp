@@ -10,6 +10,9 @@ int main() {
     InitWindow(0, 0, "Land of Promise");
     //ToggleFullscreen();
 
+    unsigned int n = std::thread::hardware_concurrency();
+    std::cout << n << " concurrent threads are supported.\n";
+
     Game g = Game();
 
     SetTargetFPS(60);

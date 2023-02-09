@@ -13,6 +13,7 @@ public:
     std::vector<float> vertices;
     std::vector<unsigned short> indices;
     std::vector<float> texcoords;
+    bool uploadMesh;
 
     void GenerateBlockMesh(Direction direction, Vector3 location, BlockType blockType, BlockType neighborBlock);
 
@@ -168,10 +169,15 @@ void ChunkMesh::RefreshMesh() {
 
     mesh.texcoords = &texcoords[0];
 
-    UploadMesh(&mesh, false);
+    uploadMesh = true;
 }
 
 void ChunkMesh::RenderChunkMesh() {
+    if (uploadMesh) {
+        UploadMesh(&mesh, false);
+        uploadMesh = false;
+    }
+
     DrawMesh(mesh, blockDataManager->atlas, MatrixIdentity());
 }
 

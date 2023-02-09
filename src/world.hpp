@@ -8,9 +8,13 @@
 #include <string>
 #include "blockDataManager.hpp"
 #include "threadPool.hpp"
-#include "chrono"
 
-const int WORLD_WIDTH = 20; // In chunks
+const int WORLD_WIDTH = 24; // In chunks
+const int WORLD_GENERATION_NUM_THREADS = 16;
+const int WORLD_UPDATE_NUM_THREADS = 16;
+
+ThreadPool worldGenerationThreadPool = ThreadPool(WORLD_GENERATION_NUM_THREADS);
+ThreadPool worldUpdateThreadPool = ThreadPool(WORLD_UPDATE_NUM_THREADS);
 
 class World {
 public:
@@ -45,7 +49,6 @@ void World::GenerateWorld() {
         }
     }
 
-    ThreadPool worldGenerationThreadPool = ThreadPool(8);
     for (int x = 0; x < WORLD_WIDTH; x++) {
         for (int y = 0; y < WORLD_WIDTH; y++) {
             worldGenerationThreadPool.QueueJob([this, x, y, perlin] {
@@ -55,15 +58,18 @@ void World::GenerateWorld() {
     }
 
     worldGenerationThreadPool.WaitUntilFinished();
-    worldGenerationThreadPool.Stop();
 }
 
 void World::Update() {
     for (int x = 0; x < WORLD_WIDTH; x++) {
         for (int z = 0; z < WORLD_WIDTH; z++) {
-            chunkMap[x][z].Update(&chunkMap, WORLD_WIDTH);
+            worldUpdateThreadPool.QueueJob([this, x, z] {
+                chunkMap[x][z].Update(&chunkMap, WORLD_WIDTH);
+            });
         }
     }
+
+    worldUpdateThreadPool.WaitUntilFinished();
 }
 
 void World::Render() {
